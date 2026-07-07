@@ -5,6 +5,13 @@ import familyFunImg from "@/imports/image-4.png";
 import watAWednesdayImg from "@/imports/image-8.png";
 import adventureSavingsImg from "@/imports/image-5.png";
 import snowParkImg from "@/imports/image-7.png";
+import char10Img from "@/imports/image-10.png";
+import char11Img from "@/imports/image-11.png";
+import char12Img from "@/imports/image-12.png";
+import tubbbyImg    from "@/imports/image-13.png";
+import bowWowImg    from "@/imports/image-14.png";
+import rajasaurusImg from "@/imports/image-15.png";
+import neeraImg     from "@/imports/image-16.png";
 import {
   Menu, X, Bell, Search, ChevronRight, Star, Clock, Users, Zap, MapPin,
   Ticket, Gift, Home, Compass, Award, ArrowRight, TrendingUp, CloudSun,
@@ -121,7 +128,7 @@ const ThrillDots = ({ level }: { level:number }) => (
 function Navbar({ page, setPage, scrolled }: { page:string; setPage:(p:string)=>void; scrolled:boolean }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [notifOpen, setNotifOpen]   = useState(false);
-  const navLinks = ["Home","Explore","Virtual Queue","Park Map","Tickets","Rewards","Profile"];
+  const navLinks = ["Home","Attractions","Explore","Virtual Queue","Park Map","Tickets","Rewards","Profile"];
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
@@ -1710,6 +1717,1135 @@ function ProfilePage({ setPage }: { setPage:(p:string)=>void }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// ATTRACTIONS DATA — Events First, Characters Secondary
+// ═══════════════════════════════════════════════════════════════════════════
+
+const EVENTS = [
+  { id:1, name:"Sky Spectacular Parade", category:"Parade",
+    time:"10:00 AM", endTime:"10:45 AM", duration:"45 min", zone:"Main Boulevard", status:"upcoming",
+    description:"The park's flagship morning parade with all ThrillVerse characters on five spectacular themed floats. A full celebration of adventure, colour and imagination.",
+    highlights:["5 Themed Floats","All 4 Characters","Live Band","Confetti Shower"],
+    characters:["Spark","Nova","Bolt","Splash"],
+    route:["Main Gate","Grand Plaza","Thriller Zone","Water Zone Entry","Central Stage"],
+    crowd:"High",
+    img:"https://images.unsplash.com/photo-1666272470293-e491e7a289ac?w=700&h=480&fit=crop&auto=format",
+  },
+  { id:2, name:"Thunder Beats Live Show", category:"Live Show",
+    time:"12:30 PM", endTime:"1:30 PM", duration:"60 min", zone:"Central Plaza", status:"live",
+    description:"A high-energy live music and dance performance at Central Plaza stage. Features acrobatics, live percussion and an electrifying light show.",
+    highlights:["Live Band","Acrobatics","Light Show","Audience Participation"],
+    characters:["Bolt"],
+    route:["Central Plaza Stage — Fixed Venue"],
+    crowd:"Moderate",
+    img:"https://images.unsplash.com/photo-1577042816206-2e85c23f2392?w=700&h=480&fit=crop&auto=format",
+  },
+  { id:3, name:"Fantasy Carnival Parade", category:"Parade",
+    time:"4:00 PM", endTime:"4:45 PM", duration:"45 min", zone:"Adventure Street", status:"upcoming",
+    description:"The afternoon parade winds through Adventure Street with vibrant floats, stilt walkers, fire performers and interactive moments at every corner.",
+    highlights:["Stilt Walkers","Fire Performers","Carnival Floats","Meet Characters"],
+    characters:["Spark","Splash"],
+    route:["Carnival Gate","Adventure Street","Jungle Path","Fantasy Square"],
+    crowd:"High",
+    img:"https://images.unsplash.com/photo-1762639112031-26c76246101f?w=700&h=480&fit=crop&auto=format",
+  },
+  { id:4, name:"Galaxy Lights Night Parade", category:"Night Parade",
+    time:"8:00 PM", endTime:"8:30 PM", duration:"30 min", zone:"Castle Avenue", status:"upcoming",
+    description:"The day's spectacular finale. Glowing floats, laser beams, thousands of LED lights and a firework finale transform Castle Avenue into a night to remember.",
+    highlights:["LED Floats","Laser Show","Fireworks","Glowing Characters"],
+    characters:["Nova","Spark"],
+    route:["Castle Gate","Galaxy Bridge","Star Plaza","Grand Finale Stage"],
+    crowd:"Very High",
+    img:"https://images.unsplash.com/photo-1761853321810-f4f9b843eda2?w=700&h=480&fit=crop&auto=format",
+  },
+];
+
+const THRILLVERSE_CHARS = [
+  {
+    id:1, name:"Tubbby", role:"The Flying Elephant", color:"#e53e3e", bg:"#fff5f5",
+    img:tubbbyImg, imgPos:"center",
+    desc:"When Tubbby was little, he dreamt of flying. Even when everyone told him otherwise, he didn't back down. Our flying elephant knows how dearly every kid holds his ambition — so Tubbby is here to give a flight to every kid's dream.",
+    personality:"Optimistic, Fearless, Inspiring",
+    funFact:"Tubbby is the only elephant in the world who actually achieved his dream of flying!",
+    meet:"Kids Zone — Zone D", meetTime:"11:00 AM & 3:30 PM",
+    shows:["Morning Parade: 10:00 AM","Kids Show: 2:00 PM","Evening Parade: 6:00 PM"],
+  },
+  {
+    id:2, name:"Detective Bow Wow", role:"Park Detective & Comedian", color:"#c05621", bg:"#fffaf0",
+    img:bowWowImg, imgPos:"center",
+    desc:"Making sure to keep the smiles intact with his toxic enthusiasm and witty comebacks, Detective Bow Wow is ThrillVerse's very own Mr. Funny Bones. But he's more than just a comedian — no mystery can stay unsolved under his keen watch.",
+    personality:"Witty, Enthusiastic, Clever",
+    funFact:"Detective Bow Wow has solved over 500 park mysteries — all involving missing ice cream!",
+    meet:"Central Plaza", meetTime:"12:00 PM & 4:00 PM",
+    shows:["Comedy Hour: 12:30 PM","Mystery Show: 5:00 PM"],
+  },
+  {
+    id:3, name:"Neera & Shera", role:"Mermaid Princess of the Deep", color:"#6b46c1", bg:"#f5f3ff",
+    img:neeraImg, imgPos:"center",
+    desc:"Brave as a soldier, Neera is the mermaid princess who lives underneath the oceans. She is the most fearless mermaid and doesn't hesitate in taking on new challenges for the ones she loves. She sees through everyone's appearance and recognises their inner goodness.",
+    personality:"Brave, Compassionate, Fearless",
+    funFact:"Neera can see through anyone's appearance and instantly recognise their inner goodness!",
+    meet:"Water Zone — Zone B", meetTime:"10:30 AM & 3:00 PM",
+    shows:["Water Show: 11:00 AM","Aqua Performance: 4:30 PM"],
+  },
+  {
+    id:4, name:"Rajasaurus", role:"Friendliest Dino in the Park", color:"#2b6cb0", bg:"#ebf8ff",
+    img:rajasaurusImg, imgPos:"center",
+    desc:"Most likely to scare you at first sight, Rajasaurus is the friendliest dino at ThrillVerse. He loves playing the host and having people over for tea parties. No matter who he meets, he'll make sure to compliment them and make their day!",
+    personality:"Friendly, Hospitable, Cheerful",
+    funFact:"Rajasaurus holds the park record for most tea parties hosted in a single day — 8 parties!",
+    meet:"Thriller Zone Hub — Zone A", meetTime:"11:30 AM & 5:00 PM",
+    shows:["Dino Show: 1:00 PM","Evening Parade: 6:00 PM"],
+  },
+];
+
+const ENTERTAINMENT_ACTS = [
+  {
+    id:1, name:"Bhangra Boys", emoji:"🥁",
+    desc:"Every move they make will rock you off your feet. Step up with us as the Bhangra Boys compel you to shake a leg. Get Down there!",
+    img:"https://images.unsplash.com/photo-1759738102510-ec524f666274?w=500&h=380&fit=crop&auto=format",
+    color:"#e53e3e", bg:"#fff5f5",
+  },
+  {
+    id:2, name:"Hip Hop Dancers", emoji:"🎤",
+    desc:"These hip hoppers will blow your mind as they work their moves on the grooviest numbers in town. Get your move on already!",
+    img:"https://images.unsplash.com/photo-1761882619891-6529ff92df0a?w=500&h=380&fit=crop&auto=format",
+    color:"#6b46c1", bg:"#f5f3ff",
+  },
+  {
+    id:3, name:"Acrobats", emoji:"🎪",
+    desc:"You could've never imagined a human doing the tricks with their bodies the way these guys pull off. Don't miss the acrobats for an absolute visual treat!",
+    img:"https://images.unsplash.com/photo-1738681172508-12b39b19ffd2?w=500&h=380&fit=crop&auto=format",
+    color:"#2b6cb0", bg:"#ebf8ff",
+  },
+  {
+    id:4, name:"Magic Show", emoji:"🎩",
+    desc:"This isn't ThrillVerse without a little bit of Magic! Experience the most out-of-this-world magic tricks, which you might have seen only in movies yet.",
+    img:"https://images.unsplash.com/photo-1571235479512-36bb46e1c587?w=500&h=380&fit=crop&auto=format",
+    color:"#2d3748", bg:"#f7fafc",
+  },
+];
+
+const FESTIVALS = [
+  { id:1, name:"Summer Splash Festival",  dates:"Jun 1 – Aug 31",  emoji:"☀️", color:CYAN,
+    desc:"All-day water events, splash zones and summer entertainment across Zone B.",
+    img:"https://images.unsplash.com/photo-1562874662-050427780b20?w=600&h=380&fit=crop&auto=format" },
+  { id:2, name:"Halloween Nights",         dates:"Oct 1 – Oct 31",  emoji:"🎃", color:ORANGE,
+    desc:"Spooky shows, haunted zones, costume parades and themed rides after dark.",
+    img:"https://images.unsplash.com/photo-1761853321810-f4f9b843eda2?w=600&h=380&fit=crop&auto=format" },
+  { id:3, name:"Winter Wonderland",        dates:"Dec 1 – Dec 31",  emoji:"❄️", color:BLUE,
+    desc:"Snow effects, holiday shows, festive parades and a magical lights trail through the park.",
+    img:"https://images.unsplash.com/photo-1764422474375-97b032a5190d?w=600&h=380&fit=crop&auto=format" },
+  { id:4, name:"Festival of Lights",       dates:"Jan 14 – Jan 26", emoji:"✨", color:AMBER,
+    desc:"Thousands of illuminated installations, light parades and firework shows across all zones.",
+    img:"https://images.unsplash.com/photo-1764515836774-eee30a42de1d?w=600&h=380&fit=crop&auto=format" },
+];
+
+const ATTR_GALLERY = [
+  { src:"https://images.unsplash.com/photo-1666272470293-e491e7a289ac?w=500&h=380&fit=crop&auto=format", label:"Morning Parade"   },
+  { src:"https://images.unsplash.com/photo-1577042816206-2e85c23f2392?w=500&h=380&fit=crop&auto=format", label:"Live Show"        },
+  { src:"https://images.unsplash.com/photo-1762639112031-26c76246101f?w=500&h=760&fit=crop&auto=format", label:"Fantasy Carnival" },
+  { src:"https://images.unsplash.com/photo-1574504212584-29a03eb6e41e?w=500&h=380&fit=crop&auto=format", label:"Audience"         },
+  { src:"https://images.unsplash.com/photo-1761853321810-f4f9b843eda2?w=500&h=380&fit=crop&auto=format", label:"Night Parade"     },
+  { src:"https://images.unsplash.com/photo-1631800744240-d95925aacb01?w=500&h=380&fit=crop&auto=format", label:"Park Crowd"       },
+  { src:"https://images.unsplash.com/photo-1601930113377-729966035f34?w=500&h=380&fit=crop&auto=format", label:"Swing Ride"       },
+  { src:"https://images.unsplash.com/photo-1762639111748-982bda14135e?w=500&h=380&fit=crop&auto=format", label:"Night Rides"      },
+  { src:"https://images.unsplash.com/photo-1760281487360-68bf06368e6d?w=500&h=380&fit=crop&auto=format", label:"Water Zone"       },
+];
+
+// placeholder so old CHARACTERS references don't break
+const CHARACTERS = [
+  { id:1, name:"Thunder Wolf",  role:"Thriller Zone Guardian",  color:ORANGE, zone:"Zone A",
+    description:"The fearless guardian who leads every thrill-seeker through the most adrenaline-pumping adventures.",
+    image:"https://images.unsplash.com/photo-1547675960-7634cf1b0856?w=400&h=400&fit=crop&auto=format" },
+  { id:2, name:"Aqua Blue",     role:"Water Zone Duchess",       color:CYAN,   zone:"Zone B",
+    description:"The playful spirit who keeps the waves rolling and the splashes flying all day long.",
+    image:"https://images.unsplash.com/photo-1760281487360-68bf06368e6d?w=400&h=400&fit=crop&auto=format" },
+  { id:3, name:"Forest Fairy",  role:"Family Zone Guide",        color:INDIGO, zone:"Zone C",
+    description:"The magical guide who creates unforgettable memories for families with her enchanted touch.",
+    image:"https://images.unsplash.com/photo-1534283542176-7cb0c9ac33e0?w=400&h=400&fit=crop&auto=format" },
+  { id:4, name:"Mini Roar",     role:"Kids Zone Hero",           color:GREEN,  zone:"Zone D",
+    description:"The lovable champion who makes every kid feel like a superhero from the moment they arrive.",
+    image:"https://images.unsplash.com/photo-1692301311188-bda319576dd1?w=400&h=400&fit=crop&auto=format" },
+  { id:5, name:"Captain Splash",role:"Water Rides Captain",      color:BLUE,   zone:"Zone B",
+    description:"The daring captain who ensures every splash is more epic than the last.",
+    image:"https://images.unsplash.com/photo-1631800744177-0e434940e0c8?w=400&h=400&fit=crop&auto=format" },
+  { id:6, name:"Star Racer",    role:"Speed Zone Champion",      color:AMBER,  zone:"Zone A",
+    description:"The speed demon who holds the record for the fastest lap on every coaster in the park.",
+    image:"https://images.unsplash.com/photo-1761501638917-f6fb28a84adb?w=400&h=400&fit=crop&auto=format" },
+  { id:7, name:"Luna Twist",    role:"Night Show Star",          color:PURPLE, zone:"Main Stage",
+    description:"The dazzling performer who lights up the sky every night with spectacular fireworks.",
+    image:"https://images.unsplash.com/photo-1504027973709-58986e840e79?w=400&h=400&fit=crop&auto=format" },
+  { id:8, name:"Jungle Jack",   role:"Safari Explorer",          color:GREEN,  zone:"Zone C",
+    description:"The adventurous explorer who guides families through the wildest jungle safari experience.",
+    image:"https://images.unsplash.com/photo-1460176449511-ff5fc8e64c35?w=400&h=400&fit=crop&auto=format" },
+];
+
+const GALLERY_IMAGES = [
+  { id:1, src:"https://images.unsplash.com/photo-1547675960-7634cf1b0856?w=500&h=380&fit=crop&auto=format", alt:"Thunder Loop" },
+  { id:2, src:"https://images.unsplash.com/photo-1601930113377-729966035f34?w=500&h=380&fit=crop&auto=format", alt:"Swing Ride"  },
+  { id:3, src:"https://images.unsplash.com/photo-1760281487360-68bf06368e6d?w=500&h=380&fit=crop&auto=format", alt:"Water Ride"  },
+  { id:4, src:"https://images.unsplash.com/photo-1692301311188-bda319576dd1?w=500&h=380&fit=crop&auto=format", alt:"Sky Wheel"   },
+  { id:5, src:"https://images.unsplash.com/photo-1761501638917-f6fb28a84adb?w=500&h=380&fit=crop&auto=format", alt:"Night Ride"  },
+  { id:6, src:"https://images.unsplash.com/photo-1631800744177-0e434940e0c8?w=500&h=380&fit=crop&auto=format", alt:"Splash Ride" },
+  { id:7, src:"https://images.unsplash.com/photo-1536302996699-caceffbc68df?w=500&h=380&fit=crop&auto=format", alt:"Coaster"     },
+  { id:8, src:"https://images.unsplash.com/photo-1504027973709-58986e840e79?w=500&h=380&fit=crop&auto=format", alt:"Night Show"  },
+  { id:9, src:"https://images.unsplash.com/photo-1460176449511-ff5fc8e64c35?w=500&h=380&fit=crop&auto=format", alt:"Carnival"    },
+];
+
+const PARADE_DATA = [
+  {
+    id:1,
+    title:"Grand ThrillVerse Parade",
+    description:"The flagship parade that kicks off every morning with all ThrillVerse characters, spectacular floats, live music, and a non-stop celebration of thrills. Every float is uniquely designed for each zone — from fire-breathing thriller beasts to dancing water sprites. Arrive early for front-row spots!",
+    timings:["10:00 AM","2:00 PM","6:00 PM"],
+    duration:"45 minutes",
+    location:"Main Boulevard",
+    img:"https://images.unsplash.com/photo-1631800744240-d95925aacb01?w=700&h=480&fit=crop&auto=format",
+    highlights:["All 8 Characters","5 Spectacular Floats","Live Band","Confetti Shower"],
+  },
+  {
+    id:2,
+    title:"Aqua Splash Night Parade",
+    description:"An electrifying night parade through the Water Zone featuring glowing floats, water cannons, and the park's beloved water characters lighting up the evening sky. Bring a raincoat — things get wonderfully wet! The perfect end to a thrilling day at ThrillVerse.",
+    timings:["7:30 PM","9:00 PM"],
+    duration:"30 minutes",
+    location:"Water Zone Path",
+    img:"https://images.unsplash.com/photo-1764105440301-0869c5cebb9f?w=700&h=480&fit=crop&auto=format",
+    highlights:["Glowing Floats","Water Cannons","Laser Show","Night Fireworks"],
+  },
+];
+
+const FEATURED_CHARS = [
+  {
+    id:1,
+    name:"Thunder Wolf",
+    title:"Meet the Guardian of Zone A",
+    description:"Thunder Wolf is the fearless guardian who has protected the Thriller Zone since the very first day ThrillVerse opened. With lightning-fast reflexes and an unbreakable spirit, he leads every brave adventurer through the most heart-pounding rides. Meet him at the Zone A entrance every morning for a photo and an autograph!",
+    img:"https://images.unsplash.com/photo-1547675960-7634cf1b0856?w=700&h=500&fit=crop&auto=format",
+    meet:"Zone A Entrance · 11:00 AM & 3:00 PM",
+    color:ORANGE,
+    bg:"#fff7f0",
+  },
+  {
+    id:2,
+    name:"Luna Twist",
+    title:"The Star of Every Night Show",
+    description:"Luna Twist transforms ThrillVerse every evening into a world of light, colour and wonder. Her nightly performance at the Main Stage is the most anticipated event — a breathtaking 30-minute show with fireworks, laser beams, and a story that touches every heart. Grab your seats by 7:45 PM!",
+    img:"https://images.unsplash.com/photo-1504027973709-58986e840e79?w=700&h=500&fit=crop&auto=format",
+    meet:"Main Stage · 8:00 PM Daily",
+    color:PURPLE,
+    bg:"#f5f3ff",
+  },
+];
+
+const DAILY_PERFS = [
+  { time:"10:00 AM", title:"Morning Grand Parade",      venue:"Main Boulevard", duration:"45 min", emoji:"🎉" },
+  { time:"12:30 PM", title:"Character Meet & Greet",    venue:"Central Plaza",  duration:"60 min", emoji:"🤝" },
+  { time:"2:00 PM",  title:"Stunt Spectacular Show",    venue:"Arena East",     duration:"25 min", emoji:"🎪" },
+  { time:"4:00 PM",  title:"Magic & Illusions",         venue:"Family Stage",   duration:"30 min", emoji:"🎩" },
+  { time:"6:00 PM",  title:"Afternoon Grand Parade",    venue:"Main Boulevard", duration:"45 min", emoji:"🎠" },
+  { time:"8:00 PM",  title:"Luna's Night Extravaganza", venue:"Main Stage",     duration:"30 min", emoji:"🌟" },
+];
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CharacterCard — reusable card component
+// Props: image, name, role, description, color
+// ═══════════════════════════════════════════════════════════════════════════
+function CharacterCard({ image, name, role, description, color, zone }:
+  { image:string; name:string; role:string; description:string; color:string; zone:string }) {
+  return (
+    <div
+      className="group relative flex-shrink-0 w-60 rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl cursor-pointer"
+      style={{ border:`1.5px solid ${color}22`, boxShadow:`0 4px 16px ${color}10` }}
+    >
+      {/* Image */}
+      <div className="relative h-44 overflow-hidden" style={{ background:`${color}10` }}>
+        <img src={image} alt={name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"/>
+        <div className="absolute inset-0" style={{ background:`linear-gradient(to top, ${color}66 0%, transparent 55%)` }}/>
+        <span className="absolute top-3 left-3 px-2 py-0.5 rounded-full text-[10px] font-bold text-white" style={{ background:color }}>
+          {zone}
+        </span>
+      </div>
+      {/* Body */}
+      <div className="p-4">
+        <h3 className="font-black text-base text-[#0d1f3c] mb-0.5" style={{ fontFamily:"'Exo 2',sans-serif" }}>{name}</h3>
+        <p className="text-xs font-bold mb-2" style={{ color }}>{role}</p>
+        <p className="text-xs leading-relaxed" style={{ color:"#5a78a8" }}>{description}</p>
+        <button className="mt-3 w-full py-1.5 rounded-xl text-xs font-bold text-white transition-all hover:opacity-90"
+          style={{ background:`linear-gradient(135deg,${color},${color}bb)` }}>
+          Meet {name.split(" ")[0]}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CharacterSlider — infinite auto-scroll horizontal slider
+// useRef for container + interval, useEffect for auto-scroll
+// ═══════════════════════════════════════════════════════════════════════════
+function CharacterSlider() {
+  const sliderRef  = useRef<HTMLDivElement>(null);
+  const timerRef   = useRef<ReturnType<typeof setInterval>|null>(null);
+  const [paused, setPaused] = useState(false);
+
+  // Duplicate cards for infinite loop effect
+  const doubled = [...CHARACTERS, ...CHARACTERS];
+
+  const startScroll = () => {
+    timerRef.current = setInterval(() => {
+      if (!sliderRef.current) return;
+      const el = sliderRef.current;
+      el.scrollLeft += 1;
+      // Reset to start when reaching halfway (duplicated content)
+      if (el.scrollLeft >= el.scrollWidth / 2) {
+        el.scrollLeft = 0;
+      }
+    }, 20);
+  };
+
+  const stopScroll = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+  };
+
+  useEffect(() => {
+    if (!paused) startScroll();
+    else stopScroll();
+    return stopScroll;
+  }, [paused]);
+
+  const scrollBy = (dir: number) => {
+    if (!sliderRef.current) return;
+    sliderRef.current.scrollBy({ left: dir * 280, behavior:"smooth" });
+  };
+
+  return (
+    <div className="relative">
+      {/* Left button */}
+      <button
+        onClick={() => scrollBy(-1)}
+        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110"
+        style={{ background:`linear-gradient(135deg,${BLUE},${BLUE2})`, color:"white" }}
+      >
+        <ChevronLeft size={18}/>
+      </button>
+
+      {/* Slider container — overflow-x-auto, scrollbar hidden */}
+      <div
+        ref={sliderRef}
+        className="flex gap-4 overflow-x-auto pb-3"
+        style={{ scrollbarWidth:"none", scrollBehavior:"auto" }}
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+      >
+        {doubled.map((char, idx) => (
+          <CharacterCard
+            key={`${char.id}-${idx}`}
+            image={char.image}
+            name={char.name}
+            role={char.role}
+            description={char.description}
+            color={char.color}
+            zone={char.zone}
+          />
+        ))}
+      </div>
+
+      {/* Right button */}
+      <button
+        onClick={() => scrollBy(1)}
+        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110"
+        style={{ background:`linear-gradient(135deg,${BLUE},${BLUE2})`, color:"white" }}
+      >
+        <ChevronRight size={18}/>
+      </button>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ParadeSection — two-column: image left / info right (alternates per index)
+// ═══════════════════════════════════════════════════════════════════════════
+function ParadeSection({ parade, index }: { parade:typeof PARADE_DATA[0]; index:number }) {
+  const isEven = index % 2 === 0;
+  return (
+    <div className={`flex flex-col ${isEven ? "lg:flex-row" : "lg:flex-row-reverse"} gap-8 lg:gap-12 items-center`}>
+      {/* Image / video thumbnail */}
+      <div className="w-full lg:w-1/2 rounded-3xl overflow-hidden shadow-xl" style={{ aspectRatio:"16/9" }}>
+        <img src={parade.img} alt={parade.title} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"/>
+      </div>
+
+      {/* Info */}
+      <div className="w-full lg:w-1/2">
+        <p className="text-xs font-black tracking-widest mb-2" style={{ color:ORANGE }}>🎠 PARADE</p>
+        <h2 className="text-3xl font-black text-[#0d1f3c] mb-4" style={{ fontFamily:"'Exo 2',sans-serif" }}>{parade.title}</h2>
+        <p className="text-sm leading-relaxed mb-5" style={{ color:"#5a78a8" }}>{parade.description}</p>
+
+        {/* Highlights */}
+        <div className="flex flex-wrap gap-2 mb-5">
+          {parade.highlights.map(h => (
+            <span key={h} className="px-3 py-1 rounded-full text-xs font-bold" style={{ background:"#fff7f0", color:ORANGE }}>✦ {h}</span>
+          ))}
+        </div>
+
+        {/* Info grid */}
+        <div className="grid grid-cols-3 gap-3 mb-5">
+          {[
+            { label:"Duration",  value:parade.duration },
+            { label:"Location",  value:parade.location },
+            { label:"Shows/Day", value:`${parade.timings.length}x Daily` },
+          ].map(({ label, value }) => (
+            <div key={label} className="p-3 rounded-2xl text-center" style={{ background:"#f0f5ff" }}>
+              <p className="text-xs font-black text-[#0d1f3c]">{value}</p>
+              <p className="text-[10px] mt-0.5" style={{ color:"#5a78a8" }}>{label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Timings */}
+        <div>
+          <p className="text-xs font-bold mb-2" style={{ color:"#5a78a8" }}>SHOW TIMINGS</p>
+          <div className="flex flex-wrap gap-2">
+            {parade.timings.map(t => (
+              <span key={t} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-bold" style={{ background:`${BLUE}15`, color:BLUE }}>
+                <Clock size={12}/> {t}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FeaturedCharacter — large image one side, info other side (alternates)
+// ═══════════════════════════════════════════════════════════════════════════
+function FeaturedCharacter({ char, index }: { char:typeof FEATURED_CHARS[0]; index:number }) {
+  const isEven = index % 2 === 0;
+  return (
+    <div className={`flex flex-col ${isEven ? "lg:flex-row" : "lg:flex-row-reverse"} gap-10 lg:gap-16 items-center`}>
+      {/* Image */}
+      <div className="w-full lg:w-5/12 rounded-3xl overflow-hidden shadow-2xl" style={{ aspectRatio:"4/3" }}>
+        <img src={char.img} alt={char.name} className="w-full h-full object-cover"/>
+      </div>
+
+      {/* Info */}
+      <div className="w-full lg:w-7/12">
+        <span className="inline-block px-3 py-1 rounded-full text-xs font-black mb-4" style={{ background:char.bg, color:char.color }}>
+          ⭐ FEATURED CHARACTER
+        </span>
+        <h2 className="text-3xl sm:text-4xl font-black text-[#0d1f3c] mb-4 leading-tight" style={{ fontFamily:"'Exo 2',sans-serif" }}>
+          {char.title}
+        </h2>
+        <p className="text-sm leading-relaxed mb-6" style={{ color:"#5a78a8" }}>{char.description}</p>
+
+        {/* Meet info */}
+        <div className="flex items-center gap-3 p-4 rounded-2xl mb-6" style={{ background:char.bg, border:`1.5px solid ${char.color}25` }}>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background:char.color }}>
+            <MapPin size={18} className="text-white"/>
+          </div>
+          <div>
+            <p className="text-xs font-bold" style={{ color:char.color }}>MEET & GREET</p>
+            <p className="text-sm font-bold text-[#0d1f3c]">{char.meet}</p>
+          </div>
+        </div>
+
+        <div className="flex gap-3">
+          <button className="flex items-center gap-2 px-6 py-3 rounded-2xl text-sm font-bold text-white transition-all hover:shadow-lg hover:opacity-90"
+            style={{ background:`linear-gradient(135deg,${char.color},${char.color}bb)` }}>
+            <MapPin size={14}/> Find on Map
+          </button>
+          <button className="flex items-center gap-2 px-6 py-3 rounded-2xl text-sm font-bold transition-all hover:shadow-md"
+            style={{ background:char.bg, color:char.color, border:`1.5px solid ${char.color}30` }}>
+            <Star size={14}/> Learn More
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Gallery — CSS Grid, responsive columns
+// ═══════════════════════════════════════════════════════════════════════════
+function GallerySection() {
+  const [selected, setSelected] = useState<typeof GALLERY_IMAGES[0]|null>(null);
+  return (
+    <div>
+      {/* Grid: 3 cols desktop, 2 tablet, 1 mobile */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {GALLERY_IMAGES.map(img => (
+          <div
+            key={img.id}
+            className="group relative rounded-2xl overflow-hidden cursor-pointer"
+            style={{ aspectRatio:"4/3", boxShadow:"0 4px 16px rgba(26,110,245,0.08)" }}
+            onClick={() => setSelected(img)}
+          >
+            <img src={img.src} alt={img.alt} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"/>
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              style={{ background:"rgba(13,31,60,0.5)" }}>
+              <span className="px-4 py-2 rounded-xl text-sm font-bold text-white" style={{ background:"rgba(255,255,255,0.2)", backdropFilter:"blur(8px)" }}>
+                View Photo
+              </span>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 px-3 py-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300"
+              style={{ background:"linear-gradient(to top,rgba(13,31,60,0.8),transparent)" }}>
+              <p className="text-xs font-bold text-white">{img.alt}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Lightbox */}
+      {selected && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setSelected(null)}>
+          <div className="absolute inset-0" style={{ background:"rgba(0,0,0,0.85)", backdropFilter:"blur(10px)" }}/>
+          <div className="relative max-w-3xl w-full rounded-3xl overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
+            <img src={selected.src.replace("w=500&h=380","w=900&h=600")} alt={selected.alt} className="w-full object-cover"/>
+            <button onClick={() => setSelected(null)} className="absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center"
+              style={{ background:"rgba(255,255,255,0.9)" }}>
+              <X size={16} style={{ color:"#0d1f3c" }}/>
+            </button>
+            <div className="absolute bottom-0 left-0 right-0 p-5" style={{ background:"linear-gradient(to top,rgba(0,0,0,0.7),transparent)" }}>
+              <p className="font-bold text-white">{selected.alt}</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PerformanceSection — daily schedule + CTA
+// ═══════════════════════════════════════════════════════════════════════════
+function PerformanceSection() {
+  return (
+    <div className="rounded-3xl overflow-hidden" style={{ background:"linear-gradient(135deg,#eef4ff,#f0f5ff)", border:"1.5px solid rgba(26,110,245,0.15)" }}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+        {/* Left: schedule */}
+        <div className="p-8">
+          <p className="text-xs font-black tracking-widest mb-2" style={{ color:BLUE }}>TODAY'S SCHEDULE</p>
+          <h2 className="text-3xl font-black text-[#0d1f3c] mb-6" style={{ fontFamily:"'Exo 2',sans-serif" }}>
+            Daily <span style={{ color:BLUE }}>Performances</span>
+          </h2>
+          <div className="flex flex-col gap-3">
+            {DAILY_PERFS.map((p, i) => (
+              <div key={i} className="flex items-center gap-4 p-3 rounded-2xl bg-white transition-all hover:shadow-md"
+                style={{ border:"1px solid rgba(26,110,245,0.08)" }}>
+                <span className="text-xl w-8 text-center">{p.emoji}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-sm text-[#0d1f3c] truncate">{p.title}</p>
+                  <p className="text-[11px]" style={{ color:"#5a78a8" }}>{p.venue} · {p.duration}</p>
+                </div>
+                <span className="text-sm font-black shrink-0" style={{ fontFamily:"'Exo 2',sans-serif", color:BLUE }}>{p.time}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right: CTA */}
+        <div className="p-8 flex flex-col justify-center" style={{ background:`linear-gradient(135deg,${BLUE},${BLUE2})` }}>
+          <p className="text-xs font-black tracking-widest mb-3 text-white/70">PLAN YOUR VISIT</p>
+          <h3 className="text-3xl font-black text-white mb-4" style={{ fontFamily:"'Exo 2',sans-serif" }}>
+            Never Miss a Show
+          </h3>
+          <p className="text-sm text-white/80 mb-6 leading-relaxed">
+            Download the ThrillVerse app to get real-time notifications for all shows, parades, and character meet & greet sessions.
+          </p>
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-3 p-3 rounded-2xl" style={{ background:"rgba(255,255,255,0.15)" }}>
+              <Bell size={18} className="text-white shrink-0"/>
+              <p className="text-sm font-bold text-white">Show reminders & alerts</p>
+            </div>
+            <div className="flex items-center gap-3 p-3 rounded-2xl" style={{ background:"rgba(255,255,255,0.15)" }}>
+              <MapPin size={18} className="text-white shrink-0"/>
+              <p className="text-sm font-bold text-white">Live venue navigation</p>
+            </div>
+            <div className="flex items-center gap-3 p-3 rounded-2xl" style={{ background:"rgba(255,255,255,0.15)" }}>
+              <Zap size={18} className="text-white shrink-0"/>
+              <p className="text-sm font-bold text-white">Virtual Queue integration</p>
+            </div>
+          </div>
+          <button className="mt-6 w-full py-3.5 rounded-2xl font-bold text-sm transition-all hover:shadow-xl hover:scale-105"
+            style={{ background:"white", color:BLUE }}>
+            📱 Download App — Free
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FlipCard — 3D rotateY flip card component
+// ═══════════════════════════════════════════════════════════════════════════
+function FlipCard({ char }: { char: typeof THRILLVERSE_CHARS[0] }) {
+  const [flipped, setFlipped] = useState(false);
+  return (
+    <div style={{perspective:"1000px", height:"480px"}}>
+      <div style={{
+        position:"relative", width:"100%", height:"100%",
+        transformStyle:"preserve-3d",
+        transition:"transform 0.7s cubic-bezier(0.4,0,0.2,1)",
+        transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+      }}>
+
+        {/* ── FRONT ── */}
+        <div style={{
+          position:"absolute", inset:0,
+          backfaceVisibility:"hidden",
+          borderRadius:20, overflow:"hidden",
+          background:"white",
+          border:`1.5px solid ${char.color}28`,
+          boxShadow:`0 8px 32px ${char.color}15`,
+        }}>
+          {/* Character image */}
+          <div style={{height:248, background:char.bg, overflow:"hidden", position:"relative", display:"flex", alignItems:"center", justifyContent:"center"}}>
+            <img src={char.img} alt={char.name}
+              style={{width:"90%", height:"100%", objectFit:"contain", objectPosition:char.imgPos}}/>
+            <div style={{position:"absolute", inset:0, background:`linear-gradient(to top, ${char.color}55 0%, transparent 60%)`}}/>
+            <span style={{
+              position:"absolute", top:12, left:12, padding:"3px 10px",
+              borderRadius:999, fontSize:10, fontWeight:800,
+              background:char.color, color:"white",
+            }}>{char.role}</span>
+          </div>
+          {/* Front body */}
+          <div style={{padding:"18px 20px 20px"}}>
+            <h3 style={{fontFamily:"'Exo 2',sans-serif", fontWeight:900, fontSize:20, color:"#0d1f3c", marginBottom:4}}>{char.name}</h3>
+            <p style={{fontSize:12, color:"#5a78a8", marginBottom:16, lineHeight:1.5}}>
+              {char.desc.slice(0,90)}…
+            </p>
+            <div style={{display:"flex", gap:8}}>
+              <button onClick={()=>setFlipped(true)}
+                style={{flex:1, padding:"10px 0", borderRadius:12, fontSize:13, fontWeight:700,
+                  background:`linear-gradient(135deg,${char.color},${char.color}bb)`, color:"white", border:"none", cursor:"pointer",
+                  transition:"opacity 0.2s, transform 0.2s"}}>
+                See Details →
+              </button>
+              <div style={{padding:"10px 14px", borderRadius:12, fontSize:11, fontWeight:700,
+                background:char.bg, color:char.color, display:"flex", alignItems:"center", gap:6}}>
+                📍 {char.meet.split("—")[0].trim()}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── BACK ── */}
+        <div style={{
+          position:"absolute", inset:0,
+          backfaceVisibility:"hidden",
+          transform:"rotateY(180deg)",
+          borderRadius:20,
+          background:char.bg,
+          border:`1.5px solid ${char.color}30`,
+          boxShadow:`0 8px 32px ${char.color}20`,
+          overflow:"hidden", overflowY:"auto",
+          scrollbarWidth:"none",
+        }}>
+          {/* Back header stripe */}
+          <div style={{background:`linear-gradient(135deg,${char.color},${char.color}cc)`, padding:"16px 20px"}}>
+            <span style={{fontSize:10, fontWeight:800, color:"rgba(255,255,255,0.75)", letterSpacing:"0.1em"}}>THRILLVERSE CHARACTER</span>
+            <h3 style={{fontFamily:"'Exo 2',sans-serif", fontWeight:900, fontSize:20, color:"white", marginTop:2}}>{char.name}</h3>
+            <p style={{fontSize:11, color:"rgba(255,255,255,0.8)", marginTop:2}}>{char.role}</p>
+          </div>
+
+          <div style={{padding:"14px 16px", display:"flex", flexDirection:"column", gap:8}}>
+
+            {/* ← Back button — TOP for easy access */}
+            <button onClick={()=>setFlipped(false)}
+              style={{width:"100%", padding:"8px 0", borderRadius:10, fontSize:12, fontWeight:700,
+                background:"white", color:char.color, border:`1.5px solid ${char.color}50`,
+                cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:4}}>
+              ← Back to {char.name}
+            </button>
+
+            {/* Description */}
+            <p style={{fontSize:11, color:"#5a78a8", lineHeight:1.6, margin:"2px 0"}}>{char.desc}</p>
+
+            {/* Info cards */}
+            {[
+              {label:"PERSONALITY",  val:char.personality},
+              {label:"FUN FACT",     val:char.funFact},
+              {label:"MEET & GREET", val:`${char.meet} · ${char.meetTime}`},
+            ].map(({label,val})=>(
+              <div key={label} style={{padding:"9px 11px", borderRadius:10, background:"white", border:`1px solid ${char.color}18`}}>
+                <p style={{fontSize:9, fontWeight:800, letterSpacing:"0.12em", color:"#5a78a8", marginBottom:2}}>{label}</p>
+                <p style={{fontSize:11, fontWeight:600, color:"#0d1f3c", lineHeight:1.5}}>{val}</p>
+              </div>
+            ))}
+
+            {/* Show timings */}
+            <div style={{padding:"9px 11px", borderRadius:10, background:"white", border:`1px solid ${char.color}18`}}>
+              <p style={{fontSize:9, fontWeight:800, letterSpacing:"0.12em", color:"#5a78a8", marginBottom:3}}>PERFORMANCE TIMINGS</p>
+              {char.shows.map((s,i)=>(
+                <p key={i} style={{fontSize:11, color:"#5a78a8", lineHeight:1.6}}>• {s}</p>
+              ))}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ATTRACTIONS PAGE — Premium Disney/Universal style
+// Order: Hero → Events (primary) → Featured Parade → Characters → Gallery → Festivals → CTA
+// ═══════════════════════════════════════════════════════════════════════════
+function AttractionsPage({ setPage }: { setPage:(p:string)=>void }) {
+  const [selectedEvent, setEvent]    = useState<typeof EVENTS[0]|null>(null);
+  const [selectedChar,  setChar]     = useState<typeof THRILLVERSE_CHARS[0]|null>(null);
+  const [galleryImg,    setGallery]  = useState<typeof ATTR_GALLERY[0]|null>(null);
+  const [reminder,      setReminder] = useState<number|null>(null);
+
+  return (
+    <div className="bg-white min-h-screen">
+
+      {/* ═══ 1. HERO ═══ */}
+      <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1631800744240-d95925aacb01?w=1800&h=900&fit=crop&auto=format"
+          alt="ThrillVerse Attractions"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0" style={{background:"linear-gradient(to bottom,rgba(6,13,40,0.65) 0%,rgba(6,13,40,0.38) 45%,rgba(6,13,40,0.82) 88%,#ffffff 100%)"}}/>
+        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+          <span className="inline-block px-4 py-1.5 rounded-full text-xs font-black tracking-widest text-white mb-5"
+            style={{background:"rgba(255,255,255,0.12)",border:"1px solid rgba(255,255,255,0.28)",backdropFilter:"blur(8px)"}}>
+            THRILLVERSE LIVE ENTERTAINMENT
+          </span>
+          <h1 className="text-5xl sm:text-7xl font-black text-white mb-5 leading-tight"
+            style={{fontFamily:"'Exo 2',sans-serif",textShadow:"0 4px 32px rgba(0,0,0,0.4)"}}>
+            World of <span style={{color:"#7dd3fc"}}>Attractions</span>
+          </h1>
+          <p className="text-base sm:text-xl text-white/85 max-w-2xl mx-auto mb-8 leading-relaxed">
+            Experience spectacular parades, live entertainment, family shows, seasonal festivals, and meet original ThrillVerse characters throughout the day.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <button className="px-8 py-3.5 rounded-full font-bold text-sm text-white transition-all hover:scale-105"
+              style={{background:`linear-gradient(135deg,${BLUE},${BLUE2})`,boxShadow:"0 8px 28px rgba(26,110,245,0.45)"}}>
+              Explore Schedule
+            </button>
+            <button onClick={()=>setPage("Park Map")}
+              className="px-8 py-3.5 rounded-full font-bold text-sm text-white transition-all hover:bg-white/20"
+              style={{border:"2px solid rgba(255,255,255,0.5)",backdropFilter:"blur(8px)"}}>
+              View Park Map
+            </button>
+          </div>
+          <div className="flex flex-wrap justify-center gap-8 mt-12">
+            {[{val:"17",label:"Rides"},{val:"4",label:"Zones"},{val:"6",label:"Daily Shows"},{val:"4",label:"Original Characters"}].map(s=>(
+              <div key={s.label} className="text-center">
+                <p className="text-3xl font-black text-white" style={{fontFamily:"'Exo 2',sans-serif"}}>{s.val}</p>
+                <p className="text-xs text-white/60 mt-0.5">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-28">
+
+        {/* ═══ 2. TODAY'S EVENTS — highest visual priority ═══ */}
+        <section className="py-14">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+            <div>
+              <p className="text-xs font-black tracking-widest mb-2" style={{color:ORANGE}}>LIVE ENTERTAINMENT</p>
+              <h2 className="text-4xl font-black text-[#0d1f3c]" style={{fontFamily:"'Exo 2',sans-serif"}}>
+                Today's <span style={{color:BLUE}}>Upcoming Events</span>
+              </h2>
+              <p className="text-sm mt-2" style={{color:"#5a78a8"}}>All times are local park time · Updated live</p>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold shrink-0"
+              style={{background:"#f0fdf4",color:GREEN,border:"1px solid rgba(16,185,129,0.2)"}}>
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"/>Park Open · 9 AM – 10 PM
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {EVENTS.map(ev=>(
+              <div key={ev.id} className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl hover:shadow-blue-100 transition-all duration-300 hover:-translate-y-1"
+                style={{border:"1.5px solid rgba(26,110,245,0.1)"}}>
+                <div className="relative overflow-hidden" style={{height:220}}>
+                  <img src={ev.img} alt={ev.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"/>
+                  <div className="absolute inset-0" style={{background:"linear-gradient(to top,rgba(13,31,60,0.88) 0%,rgba(13,31,60,0.12) 55%,transparent 100%)"}}/>
+                  <div className="absolute top-3 left-3">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black"
+                      style={{background:ev.status==="live"?"#fef2f2":"rgba(255,255,255,0.93)",color:ev.status==="live"?RED:BLUE}}>
+                      <span className={`w-2 h-2 rounded-full ${ev.status==="live"?"bg-red-500 animate-pulse":"bg-blue-500"}`}/>
+                      {ev.status==="live"?"LIVE NOW":"UPCOMING"}
+                    </span>
+                  </div>
+                  <div className="absolute top-3 right-3">
+                    <span className="px-2.5 py-1 rounded-full text-xs font-bold text-white"
+                      style={{background:"rgba(0,0,0,0.35)",backdropFilter:"blur(6px)"}}>{ev.category}</span>
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <p className="text-2xl font-black text-white" style={{fontFamily:"'Exo 2',sans-serif"}}>{ev.time}</p>
+                        <p className="text-xs text-white/70">ends {ev.endTime} · {ev.duration}</p>
+                      </div>
+                      <p className="text-xs font-bold text-white/80">📍 {ev.zone}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-5">
+                  <h3 className="font-black text-xl text-[#0d1f3c] mb-2" style={{fontFamily:"'Exo 2',sans-serif"}}>{ev.name}</h3>
+                  <p className="text-sm leading-relaxed mb-4" style={{color:"#5a78a8"}}>{ev.description}</p>
+                  <div className="flex flex-wrap gap-1.5 mb-4">
+                    {ev.highlights.map(h=>(
+                      <span key={h} className="px-2.5 py-1 rounded-lg text-[11px] font-bold" style={{background:"#f0f5ff",color:BLUE}}>✦ {h}</span>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-2 mb-4 text-xs" style={{color:"#5a78a8"}}>
+                    <span className="font-bold">Characters:</span>
+                    {ev.characters.map(c=>(
+                      <span key={c} className="px-2 py-0.5 rounded-full font-bold" style={{background:"#fff7f0",color:ORANGE}}>{c}</span>
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button onClick={()=>setEvent(ev)} className="py-2 rounded-xl text-xs font-bold text-white transition-all hover:opacity-90"
+                      style={{background:`linear-gradient(135deg,${BLUE},${BLUE2})`}}>View Details</button>
+                    <button onClick={()=>setPage("Park Map")} className="py-2 rounded-xl text-xs font-bold transition-all"
+                      style={{background:"#f0f5ff",color:BLUE}}>View on Map</button>
+                    <button onClick={()=>setReminder(ev.id)} className="py-2 rounded-xl text-xs font-bold transition-all"
+                      style={{background:reminder===ev.id?"#f0fdf4":"#f0f5ff",color:reminder===ev.id?GREEN:"#5a78a8",border:reminder===ev.id?"1px solid rgba(16,185,129,0.3)":"none"}}>
+                      {reminder===ev.id?"✓ Set":"Set Reminder"}</button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ═══ 3. FEATURED PARADE ═══ */}
+        <section className="py-6">
+          <div className="rounded-3xl overflow-hidden shadow-xl" style={{border:"1.5px solid rgba(249,115,22,0.15)"}}>
+            <div className="grid grid-cols-1 lg:grid-cols-2">
+              <div className="relative overflow-hidden" style={{minHeight:420}}>
+                <img src={EVENTS[0].img} alt={EVENTS[0].name} className="absolute inset-0 w-full h-full object-cover"/>
+                <div className="absolute inset-0" style={{background:"linear-gradient(to right,transparent 65%,white 100%)"}}/>
+                <div className="absolute top-5 left-5">
+                  <span className="px-3 py-1.5 rounded-full text-xs font-black text-white" style={{background:ORANGE}}>🎠 FEATURED PARADE</span>
+                </div>
+              </div>
+              <div className="p-8 flex flex-col justify-center bg-white">
+                <p className="text-xs font-black tracking-widest mb-3" style={{color:ORANGE}}>TODAY'S HIGHLIGHT</p>
+                <h2 className="text-3xl font-black text-[#0d1f3c] mb-3" style={{fontFamily:"'Exo 2',sans-serif"}}>{EVENTS[0].name}</h2>
+                <p className="text-sm leading-relaxed mb-5" style={{color:"#5a78a8"}}>{EVENTS[0].description}</p>
+                <div className="grid grid-cols-2 gap-3 mb-5">
+                  {[{label:"Duration",val:EVENTS[0].duration},{label:"Location",val:EVENTS[0].zone},{label:"Timings",val:`${EVENTS[0].time}, 2:00 PM, 6:00 PM`},{label:"Crowd",val:`${EVENTS[0].crowd} Expected`}].map(({label,val})=>(
+                    <div key={label} className="p-3 rounded-xl" style={{background:"#f0f5ff"}}>
+                      <p className="text-[10px] font-black tracking-wider mb-0.5" style={{color:"#5a78a8"}}>{label.toUpperCase()}</p>
+                      <p className="text-sm font-bold text-[#0d1f3c]">{val}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="mb-5">
+                  <p className="text-[10px] font-black tracking-widest mb-2" style={{color:"#5a78a8"}}>PARADE ROUTE</p>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {EVENTS[0].route.map((stop,i)=>(
+                      <span key={i} className="flex items-center gap-1.5">
+                        <span className="px-2.5 py-1 rounded-lg text-xs font-bold" style={{background:"#fff7f0",color:ORANGE}}>{stop}</span>
+                        {i<EVENTS[0].route.length-1&&<span style={{color:ORANGE}}>→</span>}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="mb-5">
+                  <p className="text-[10px] font-black tracking-widest mb-2" style={{color:"#5a78a8"}}>CHARACTERS APPEARING</p>
+                  <div className="flex gap-2">
+                    {EVENTS[0].characters.map(c=>(
+                      <span key={c} className="px-3 py-1 rounded-full text-xs font-bold text-white" style={{background:ORANGE}}>{c}</span>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={()=>setEvent(EVENTS[0])} className="flex-1 py-3 rounded-2xl font-bold text-sm text-white transition-all hover:shadow-lg hover:opacity-90"
+                    style={{background:`linear-gradient(135deg,${ORANGE},#ea580c)`}}>View Parade Route</button>
+                  <button onClick={()=>setReminder(1)} className="px-5 py-3 rounded-2xl font-bold text-sm transition-all"
+                    style={{background:reminder===1?"#f0fdf4":"#f0f5ff",color:reminder===1?GREEN:"#5a78a8"}}>
+                    {reminder===1?"✓ Set":"⏰ Remind"}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══ 4. MEET THE STARS — 3D Flip Cards ═══ */}
+        <section className="py-14">
+          <div className="text-center mb-12">
+            <p className="text-xs font-black tracking-widest mb-2" style={{color:ORANGE}}>ORIGINAL CHARACTERS</p>
+            <h2 className="text-4xl font-black text-[#0d1f3c]" style={{fontFamily:"'Exo 2',sans-serif"}}>
+              Meet the <span style={{color:BLUE}}>Stars of ThrillVerse</span>
+            </h2>
+            <p className="text-sm mt-3 max-w-lg mx-auto leading-relaxed" style={{color:"#5a78a8"}}>
+              Four original ThrillVerse characters — each with their own story, personality and daily shows. Click <b style={{color:BLUE}}>See Details</b> to flip the card and discover their world.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {THRILLVERSE_CHARS.map(ch=>(
+              <FlipCard key={ch.id} char={ch}/>
+            ))}
+          </div>
+
+        </section>
+
+        {/* ═══ 5. ENTERTAINMENT ACTS ═══ */}
+        <section className="py-10">
+          <div className="text-center mb-10">
+            <p className="text-xs font-black tracking-widest mb-2" style={{color:PURPLE}}>LIVE PERFORMANCES</p>
+            <h2 className="text-3xl font-black text-[#0d1f3c]" style={{fontFamily:"'Exo 2',sans-serif"}}>
+              Entertainment Acts Featuring <span style={{color:BLUE}}>Talented Performers</span>
+            </h2>
+            <p className="text-sm mt-2 max-w-lg mx-auto" style={{color:"#5a78a8"}}>
+              World-class live entertainment spread across the park — from heart-pumping dance to mind-bending magic.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {ENTERTAINMENT_ACTS.map(act=>(
+              <div key={act.id} className="group rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+                style={{border:`1.5px solid ${act.color}20`,boxShadow:`0 4px 16px ${act.color}0d`}}>
+                {/* Image */}
+                <div className="relative overflow-hidden" style={{height:200}}>
+                  <img src={act.img} alt={act.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"/>
+                  <div className="absolute inset-0" style={{background:`linear-gradient(to top,rgba(0,0,0,0.65) 0%,transparent 55%)`}}/>
+                  {/* Emoji badge */}
+                  <div className="absolute top-3 right-3 w-10 h-10 rounded-full flex items-center justify-center text-xl"
+                    style={{background:"rgba(255,255,255,0.92)"}}>
+                    {act.emoji}
+                  </div>
+                  {/* Act name overlay */}
+                  <div className="absolute bottom-3 left-3">
+                    <h3 className="font-black text-base text-white" style={{fontFamily:"'Exo 2',sans-serif"}}>{act.name}</h3>
+                  </div>
+                </div>
+                {/* Body */}
+                <div className="p-4">
+                  <p className="text-xs leading-relaxed mb-3" style={{color:"#5a78a8"}}>{act.desc}</p>
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-xl"
+                    style={{background:act.bg, border:`1px solid ${act.color}25`}}>
+                    <span className="text-base shrink-0">🎠</span>
+                    <p className="text-xs font-bold" style={{color:act.color}}>
+                      You can see this act in the parade!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Entertainment schedule strip */}
+          <div className="mt-8 p-5 rounded-2xl" style={{background:"linear-gradient(135deg,#f0f5ff,#eef4ff)",border:"1.5px solid rgba(26,110,245,0.12)"}}>
+            <p className="text-xs font-black tracking-widest mb-4" style={{color:BLUE}}>TODAY'S PERFORMANCE SCHEDULE</p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                {act:"Bhangra Boys",  time:"11:00 AM & 3:00 PM", venue:"Main Stage",    color:"#e53e3e"},
+                {act:"Hip Hop Crew",  time:"12:00 PM & 4:30 PM", venue:"Central Plaza", color:"#6b46c1"},
+                {act:"Acrobats",      time:"1:00 PM & 5:30 PM",  venue:"Arena East",    color:"#2b6cb0"},
+                {act:"Magic Show",    time:"2:30 PM & 7:00 PM",  venue:"Family Stage",  color:"#2d3748"},
+              ].map(p=>(
+                <div key={p.act} className="p-3 rounded-xl bg-white" style={{border:`1px solid ${p.color}18`}}>
+                  <span className="text-lg">{ENTERTAINMENT_ACTS.find(a=>a.name.includes(p.act.split(" ")[0]))?.emoji}</span>
+                  <p className="font-black text-sm text-[#0d1f3c] mt-1" style={{fontFamily:"'Exo 2',sans-serif"}}>{p.act}</p>
+                  <p className="text-xs font-bold mt-0.5" style={{color:p.color}}>{p.time}</p>
+                  <p className="text-[10px] mt-0.5" style={{color:"#5a78a8"}}>📍 {p.venue}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ═══ 6. FESTIVALS ═══ */}
+        <section className="py-10">
+          <div className="text-center mb-8">
+            <p className="text-xs font-black tracking-widest mb-2" style={{color:AMBER}}>ALL YEAR ROUND</p>
+            <h2 className="text-3xl font-black text-[#0d1f3c]" style={{fontFamily:"'Exo 2',sans-serif"}}>
+              Upcoming <span style={{color:BLUE}}>Festivals</span>
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {FESTIVALS.map(f=>(
+              <div key={f.id} className="group rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                style={{border:`1.5px solid ${f.color}20`}}>
+                <div className="relative h-36 overflow-hidden">
+                  <img src={f.img} alt={f.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"/>
+                  <div className="absolute inset-0" style={{background:`linear-gradient(to top,${f.color}cc 0%,transparent 60%)`}}/>
+                  <span className="absolute bottom-3 left-3 text-2xl">{f.emoji}</span>
+                  <span className="absolute top-3 right-3 px-2 py-0.5 rounded-full text-[10px] font-bold text-white"
+                    style={{background:"rgba(0,0,0,0.35)"}}>{f.dates}</span>
+                </div>
+                <div className="p-4">
+                  <h3 className="font-black text-base text-[#0d1f3c] mb-1" style={{fontFamily:"'Exo 2',sans-serif"}}>{f.name}</h3>
+                  <p className="text-xs leading-relaxed mb-3" style={{color:"#5a78a8"}}>{f.desc}</p>
+                  <button className="w-full py-2 rounded-xl text-xs font-bold text-white transition-all hover:opacity-90"
+                    style={{background:f.color}}>Learn More</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ═══ 7. CTA ═══ */}
+        <section className="py-6">
+          <div className="rounded-3xl overflow-hidden relative" style={{background:`linear-gradient(135deg,${BLUE} 0%,${BLUE2} 60%,#003d99 100%)`}}>
+            <div className="absolute inset-0 opacity-10" style={{backgroundImage:"url(https://images.unsplash.com/photo-1762639111748-982bda14135e?w=1200&h=400&fit=crop)",backgroundSize:"cover",backgroundPosition:"center"}}/>
+            <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6 px-8 py-12">
+              <div>
+                <p className="text-xs font-black tracking-widest text-white/70 mb-2">TODAY ONLY</p>
+                <h2 className="text-3xl font-black text-white" style={{fontFamily:"'Exo 2',sans-serif"}}>Don't Miss Today's Entertainment</h2>
+                <p className="text-sm text-white/80 mt-2 max-w-md leading-relaxed">
+                  From morning parades to the Galaxy Lights Night Parade — every hour brings a new spectacular experience.
+                </p>
+              </div>
+              <div className="flex flex-col gap-3 shrink-0">
+                <button className="px-8 py-3.5 rounded-2xl font-bold text-sm transition-all hover:scale-105 hover:shadow-xl"
+                  style={{background:"white",color:BLUE}}>View Full Schedule</button>
+                <button onClick={()=>setPage("Tickets")} className="px-8 py-3.5 rounded-2xl font-bold text-sm text-white transition-all hover:scale-105"
+                  style={{background:"rgba(255,255,255,0.18)",border:"2px solid rgba(255,255,255,0.4)",backdropFilter:"blur(8px)"}}>Book Tickets</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* ═══ EVENT DETAIL MODAL ═══ */}
+      {selectedEvent && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={()=>setEvent(null)}>
+          <div className="absolute inset-0" style={{background:"rgba(6,13,40,0.72)",backdropFilter:"blur(10px)"}}/>
+          <div className="relative w-full max-w-xl rounded-3xl overflow-hidden bg-white shadow-2xl"
+            style={{maxHeight:"88vh",overflowY:"auto",scrollbarWidth:"none"}} onClick={e=>e.stopPropagation()}>
+            <div className="relative h-52 overflow-hidden">
+              <img src={selectedEvent.img} alt={selectedEvent.name} className="w-full h-full object-cover"/>
+              <div className="absolute inset-0" style={{background:"linear-gradient(to top,rgba(13,31,60,0.88) 0%,transparent 55%)"}}/>
+              <button onClick={()=>setEvent(null)} className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center" style={{background:"rgba(255,255,255,0.95)"}}>
+                <X size={14} style={{color:"#0d1f3c"}}/>
+              </button>
+              <div className="absolute bottom-4 left-4 right-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black"
+                    style={{background:selectedEvent.status==="live"?"#fef2f2":"rgba(255,255,255,0.2)",color:selectedEvent.status==="live"?RED:"white",backdropFilter:"blur(8px)"}}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${selectedEvent.status==="live"?"bg-red-500 animate-pulse":"bg-white"}`}/>
+                    {selectedEvent.status==="live"?"LIVE NOW":"UPCOMING"}
+                  </span>
+                  <span className="text-xs text-white/80">{selectedEvent.category}</span>
+                </div>
+                <h2 className="text-xl font-black text-white" style={{fontFamily:"'Exo 2',sans-serif"}}>{selectedEvent.name}</h2>
+              </div>
+            </div>
+            <div className="p-5">
+              <div className="grid grid-cols-3 gap-2 mb-4">
+                {[{label:"Start",val:selectedEvent.time},{label:"End",val:selectedEvent.endTime},{label:"Duration",val:selectedEvent.duration}].map(({label,val})=>(
+                  <div key={label} className="p-3 rounded-xl text-center" style={{background:"#f0f5ff"}}>
+                    <p className="text-sm font-black" style={{fontFamily:"'Exo 2',sans-serif",color:BLUE}}>{val}</p>
+                    <p className="text-[10px]" style={{color:"#5a78a8"}}>{label}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-sm leading-relaxed mb-4" style={{color:"#5a78a8"}}>{selectedEvent.description}</p>
+              <p className="text-[10px] font-black tracking-widest mb-2" style={{color:"#5a78a8"}}>HIGHLIGHTS</p>
+              <div className="flex flex-wrap gap-1.5 mb-4">
+                {selectedEvent.highlights.map(h=>(
+                  <span key={h} className="px-2.5 py-1 rounded-lg text-[11px] font-bold" style={{background:"#f0f5ff",color:BLUE}}>✦ {h}</span>
+                ))}
+              </div>
+              <p className="text-[10px] font-black tracking-widest mb-2" style={{color:"#5a78a8"}}>PERFORMANCE ROUTE</p>
+              <div className="flex flex-wrap items-center gap-2 mb-4">
+                {selectedEvent.route.map((stop,i)=>(
+                  <span key={i} className="flex items-center gap-2">
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black text-white shrink-0" style={{background:BLUE}}>{i+1}</span>
+                      <span className="text-xs font-bold text-[#0d1f3c]">{stop}</span>
+                    </span>
+                    {i<selectedEvent.route.length-1&&<span style={{color:BLUE}}>→</span>}
+                  </span>
+                ))}
+              </div>
+              <p className="text-[10px] font-black tracking-widest mb-2" style={{color:"#5a78a8"}}>CHARACTERS APPEARING</p>
+              <div className="flex gap-2 mb-5">
+                {selectedEvent.characters.map(c=>(
+                  <span key={c} className="px-3 py-1.5 rounded-full text-xs font-bold text-white" style={{background:ORANGE}}>{c}</span>
+                ))}
+              </div>
+              <div className="flex items-center gap-3 p-3 rounded-2xl mb-5" style={{background:"#eef4ff"}}>
+                <MapPin size={18} style={{color:BLUE}}/><span className="text-sm font-bold text-[#0d1f3c]">{selectedEvent.zone}</span>
+                <span className="text-xs ml-auto" style={{color:"#5a78a8"}}>Crowd: <b style={{color:ORANGE}}>{selectedEvent.crowd}</b></span>
+              </div>
+              <div className="flex gap-3">
+                <button onClick={()=>setReminder(selectedEvent.id)} className="flex-1 py-2.5 rounded-2xl font-bold text-sm transition-all"
+                  style={{background:reminder===selectedEvent.id?"#f0fdf4":"#f0f5ff",color:reminder===selectedEvent.id?GREEN:"#5a78a8"}}>
+                  {reminder===selectedEvent.id?"✓ Reminder Set":"Set Reminder"}</button>
+                <button onClick={()=>setPage("Park Map")} className="flex-1 py-2.5 rounded-2xl font-bold text-sm text-white"
+                  style={{background:`linear-gradient(135deg,${BLUE},${BLUE2})`}}>View on Map</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ CHARACTER DETAIL MODAL ═══ */}
+      {selectedChar && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={()=>setChar(null)}>
+          <div className="absolute inset-0" style={{background:"rgba(6,13,40,0.72)",backdropFilter:"blur(10px)"}}/>
+          <div className="relative w-full max-w-md rounded-3xl overflow-hidden bg-white shadow-2xl"
+            style={{maxHeight:"88vh",overflowY:"auto",scrollbarWidth:"none"}} onClick={e=>e.stopPropagation()}>
+            <div className="relative h-48 overflow-hidden" style={{background:selectedChar.bg}}>
+              <img src={selectedChar.img} alt={selectedChar.name} className="w-full h-full object-cover"/>
+              <div className="absolute inset-0" style={{background:`linear-gradient(to top,${selectedChar.color}99 0%,transparent 55%)`}}/>
+              <button onClick={()=>setChar(null)} className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center"
+                style={{background:"rgba(255,255,255,0.95)"}}><X size={14} style={{color:"#0d1f3c"}}/></button>
+            </div>
+            <div className="p-5">
+              <span className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-3" style={{background:selectedChar.bg,color:selectedChar.color}}>{selectedChar.role}</span>
+              <h2 className="text-2xl font-black text-[#0d1f3c] mb-2" style={{fontFamily:"'Exo 2',sans-serif"}}>{selectedChar.name}</h2>
+              <p className="text-sm leading-relaxed mb-4" style={{color:"#5a78a8"}}>{selectedChar.desc}</p>
+              <div className="grid grid-cols-2 gap-2 mb-4">
+                {[{label:"Meet Location",val:selectedChar.meet},{label:"Meet Timings",val:selectedChar.meetTime},{label:"Favourite Ride",val:selectedChar.favoriteRide},{label:"Zone",val:selectedChar.meet}].map(({label,val})=>(
+                  <div key={label} className="p-3 rounded-xl" style={{background:"#f0f5ff"}}>
+                    <p className="text-[10px] font-bold mb-0.5" style={{color:"#5a78a8"}}>{label.toUpperCase()}</p>
+                    <p className="text-xs font-bold text-[#0d1f3c]">{val}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-[10px] font-black tracking-widest mb-2" style={{color:"#5a78a8"}}>FUN FACTS</p>
+              <div className="flex flex-col gap-2 mb-5">
+                {selectedChar.facts.map((f,i)=>(
+                  <div key={i} className="flex items-start gap-2 text-sm" style={{color:"#1a3a6e"}}>
+                    <span className="font-black shrink-0" style={{color:selectedChar.color}}>→</span>{f}
+                  </div>
+                ))}
+              </div>
+              <button className="w-full py-3 rounded-2xl font-bold text-sm text-white transition-all hover:opacity-90"
+                style={{background:`linear-gradient(135deg,${selectedChar.color},${selectedChar.color}bb)`}}>
+                Plan Your Meet & Greet</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ GALLERY LIGHTBOX ═══ */}
+      {galleryImg && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={()=>setGallery(null)}>
+          <div className="absolute inset-0" style={{background:"rgba(0,0,0,0.9)"}}/>
+          <div className="relative max-w-3xl w-full rounded-3xl overflow-hidden shadow-2xl" onClick={e=>e.stopPropagation()}>
+            <img src={galleryImg.src.replace("w=500&h=380","w=900&h=600").replace("w=500&h=760","w=900&h=1100")} alt={galleryImg.label} className="w-full object-cover"/>
+            <button onClick={()=>setGallery(null)} className="absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center"
+              style={{background:"rgba(255,255,255,0.9)"}}><X size={16} style={{color:"#0d1f3c"}}/></button>
+            <div className="absolute bottom-0 left-0 right-0 p-5" style={{background:"linear-gradient(to top,rgba(0,0,0,0.7),transparent)"}}>
+              <p className="font-bold text-white">{galleryImg.label}</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // PARK MAP DATA
 // ═══════════════════════════════════════════════════════════════════════════
 const PARK_MARKERS = [
@@ -2260,7 +3396,7 @@ export default function App() {
 
   useEffect(()=>{ window.scrollTo({top:0,behavior:"smooth"}); },[page]);
 
-  const showStatus = !["Home","Park Map"].includes(page);
+  const showStatus = !["Home","Park Map","Attractions"].includes(page);
 
   return (
     <div className="min-h-screen bg-white text-foreground" style={{fontFamily:"'Inter',sans-serif"}}>
@@ -2272,10 +3408,11 @@ export default function App() {
         {page==="Virtual Queue" && <VirtualQueuePage/>}
         {page==="Tickets"       && <TicketsPage/>}
         {page==="Rewards"       && <RewardsPage/>}
+        {page==="Attractions"   && <AttractionsPage    setPage={setPage}/>}
         {page==="Park Map"      && <ParkMapPage       setPage={setPage}/>}
         {page==="Profile"       && <ProfilePage      setPage={setPage}/>}
       </div>
-      {page!=="Home" && page!=="Park Map" && <Footer setPage={setPage}/>}
+      {page!=="Home" && page!=="Park Map" && page!=="Attractions" && <Footer setPage={setPage}/>}
       <BottomNav page={page} setPage={setPage}/>
     </div>
   );

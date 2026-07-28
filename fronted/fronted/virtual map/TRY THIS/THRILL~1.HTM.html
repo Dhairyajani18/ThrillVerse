@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ThrillVerse — Real Map Navigator</title>
+
+<!-- Leaflet (real OpenStreetMap tiles) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+  * { box-sizing: border-box; }
+  :root{
+    --blue:#2563eb; --blue-d:#1d4ed8; --slate-800:#1e293b; --slate-500:#64748b;
+    --slate-100:#f1f5f9; --slate-200:#e2e8f0; --emerald:#10b981;
+  }
+  html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#eef2f6;color:var(--slate-800);}
+  #app{display:flex;flex-direction:column;height:100vh;max-width:1280px;margin:0 auto;background:#fff;}
+  header{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--slate-100);background:var(--slate-100);}
+  .logo{width:40px;height:40px;border-radius:12px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 10px rgba(37,99,235,.35);}
+  header h1{font-size:18px;margin:0;font-weight:800;}
+  header p{margin:0;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate-500);font-weight:700;}
+  .main{flex:1;display:flex;min-height:0;}
+  .sidebar{width:340px;border-right:1px solid var(--slate-100);display:flex;flex-direction:column;min-height:0;}
+  .panel{padding:16px;background:var(--slate-100);border-bottom:1px solid var(--slate-200);}
+  .panel h3{margin:0 0 12px;font-size:13px;display:flex;align-items:center;gap:6px;}
+  .field{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .dot{width:22px;height:22px;border-radius:50%;flex:0 0 auto;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;}
+  .dot.a{background:var(--emerald);} .dot.b{background:var(--blue);}
+  select,input{width:100%;padding:9px;border:1px solid var(--slate-200);border-radius:9px;font-size:13px;outline:none;background:#fff;}
+  select:focus,input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.15);}
+  .row{display:flex;gap:8px;}
+  button.act{flex:1;margin-top:10px;padding:10px;border:0;border-radius:9px;background:var(--blue);color:#fff;font-weight:700;font-size:13px;cursor:pointer;}
+  button.act:hover{background:var(--blue-d);}
+  button.act:disabled{opacity:.5;cursor:not-allowed;}
+  button.ghost{margin-top:10px;padding:10px;border:1px solid var(--slate-200);border-radius:9px;background:#fff;color:var(--slate-500);font-weight:700;font-size:13px;cursor:pointer;}
+  .hint{font-size:11px;color:var(--slate-500);margin:6px 0 0;line-height:1.4;}
+  .steps{flex:1;overflow-y:auto;padding:16px;}
+  .summary{display:flex;justify-content:space-between;background:#eff6ff;color:#1e40af;padding:12px 14px;border-radius:12px;margin-bottom:14px;}
+  .summary .k{font-size:10px;text-transform:uppercase;letter-spacing:.1em;opacity:.7;font-weight:700;display:block;}
+  .summary .v{font-size:20px;font-weight:800;}
+  .step{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--slate-100);}
+  .step .n{width:22px;height:22px;flex:0 0 auto;border-radius:50%;background:#dbeafe;border:2px solid var(--blue);color:var(--blue-d);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;}
+  .step .txt b{font-size:12.5px;} .step .txt small{color:var(--slate-500);font-size:11px;}
+  .empty{color:var(--slate-500);font-size:12px;text-align:center;margin-top:40px;line-height:1.5;}
+  #map{flex:1;min-height:0;}
+  .leaflet-container{font-family:inherit;}
+  .marker-emoji{font-size:20px;text-align:center;line-height:30px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4));cursor:pointer;}
+  .lbl{background:rgba(255,255,255,.85);padding:1px 5px;border-radius:5px;font-size:10px;font-weight:700;color:var(--slate-800);border:1px solid var(--slate-200);white-space:nowrap;}
+  .loading{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(255,255,255,.6);z-index:1000;font-weight:700;color:var(--blue-d);}
+  @media(max-width:820px){.main{flex-direction:column;}.sidebar{width:100%;max-height:46%;}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="logo">🗺️</div>
+    <div><h1>ThrillVerse — Real Map Navigator</h1><p>OpenStreetMap · OSRM live routing</p></div>
+  </header>
+  <div class="main">
+    <div class="sidebar">
+      <div class="panel">
+        <h3>🧭 Directions</h3>
+        <div class="field">
+          <div class="dot a">●</div>
+          <select id="from"><option value="">Choose starting point…</option></select>
+        </div>
+        <div class="field">
+          <div class="dot b">📍</div>
+          <select id="to"><option value="">Choose destination…</option></select>
+        </div>
+        <div class="row">
+          <button class="act" id="go" disabled>Get Directions</button>
+          <button class="ghost" id="swap" title="Swap">⇅</button>
+          <button class="ghost" id="clear">Clear</button>
+        </div>
+        <p class="hint">Tip: you can also <b>click any two spots on the map</b> to set start &amp; end. Routing follows real roads via OSRM.</p>
+      </div>
+      <div class="steps" id="steps">
+        <div class="empty">Pick a start and destination to see the exact route and turn‑by‑turn directions on the real map.</div>
+      </div>
+    </div>
+    <div style="flex:1;position:relative;min-height:0;display:flex;">
+      <div id="map"></div>
+      <div class="loading" id="loading">Calculating route…</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- Park layout mapped onto a REAL location (Orlando theme‑park district) ---------- */
+const BOUNDS = { latMin:28.415, latMax:28.445, lngMin:-81.485, lngMax:-81.455 };
+const toLatLng = (x,y) => [
+  BOUNDS.latMax - (y/100)*(BOUNDS.latMax-BOUNDS.latMin),
+  BOUNDS.lngMin + (x/100)*(BOUNDS.lngMax-BOUNDS.lngMin)
+];
+
+const RAW = [
+  ['l-entrance','Main Entrance','🚪',50,95],
+  ['l-ticket','Ticket Plaza','🎟️',50,90],
+  ['l-boulevard','Main Boulevard','🛣️',50,75],
+  ['l-castle','Castle Plaza','🏰',50,50],
+  ['r-thunder','Thunder Loop','🎢',20,25],
+  ['r-sky','Sky Screamer','🛸',15,40],
+  ['r-vortex','Vortex Drop','🗼',30,20],
+  ['r-cyclone','Cyclone Rush','🌪️',25,35],
+  ['r-gravity','Gravity Spin','🌀',10,30],
+  ['r-fire','Fire Storm','🔥',35,30],
+  ['r-splash','Splash River','🛶',75,25],
+  ['r-aqua','Aqua Twister','🌊',85,35],
+  ['r-wave','Wave Racer','🚤',70,40],
+  ['r-tsunami','Tsunami Falls','🏄',80,15],
+  ['r-express','Adventure Express','🚂',25,65],
+  ['r-carousel','Magic Carousel','🎠',35,70],
+  ['r-safari','Jungle Safari','🚙',15,60],
+  ['r-wheel','Sky Wheel','🎡',20,80],
+  ['r-dragon','Mini Dragon','🐉',75,70],
+  ['r-train','Happy Train','🚋',85,65],
+  ['r-pirate','Pirate Ship','🏴‍☠️',70,80],
+  ['f-food','Food Court','🍔',60,45],
+  ['f-coffee','Coffee Shop','☕',45,80],
+  ['f-icecream','Ice Cream Corner','🍦',65,65],
+  ['f-store','Merchandise Store','🛍️',55,80],
+  ['f-aid','First Aid Center','⛑️',40,45],
+  ['f-info','Information Center','ℹ️',50,85],
+  ['e-plaza','Event Plaza','🎭',50,40],
+];
+
+const LOCS = RAW.map(([id,name,icon,x,y])=>{
+  const [lat,lng]=toLatLng(x,y);
+  return {id,name,icon,lat,lng};
+});
+const byId = Object.fromEntries(LOCS.map(l=>[l.id,l]));
+
+/* ---------- Map ---------- */
+const center = toLatLng(50,55);
+const map = L.map('map').setView(center, 15);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+  maxZoom:19, attribution:'&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+LOCS.forEach(l=>{
+  const icon = L.divIcon({html:`<div class="marker-emoji">${l.icon}</div>`,className:'',iconSize:[30,30],iconAnchor:[15,15]});
+  const m = L.marker([l.lat,l.lng],{icon}).addTo(map);
+  m.bindTooltip(l.name,{permanent:false,direction:'top',className:'lbl'});
+  m.on('click',()=>onMarkerClick(l.id));
+});
+
+/* ---------- UI wiring ---------- */
+const $ = s=>document.querySelector(s);
+const fromSel=$('#from'), toSel=$('#to');
+LOCS.forEach(l=>{
+  fromSel.add(new Option(l.name,l.id));
+  toSel.add(new Option(l.name,l.id));
+});
+
+let routeLayer=null, endpointLayer=L.layerGroup().addTo(map);
+function syncGo(){ $('#go').disabled = !(fromSel.value && toSel.value); }
+fromSel.onchange=syncGo; toSel.onchange=syncGo;
+
+let clickTarget='from';
+function onMarkerClick(id){
+  if(clickTarget==='from'){ fromSel.value=id; clickTarget='to'; }
+  else { toSel.value=id; clickTarget='from'; }
+  syncGo();
+}
+map.on('click', e=>{
+  // snap free clicks to nearest POI
+  let best=null,bd=Infinity;
+  LOCS.forEach(l=>{const d=(l.lat-e.latlng.lat)**2+(l.lng-e.latlng.lng)**2; if(d<bd){bd=d;best=l;}});
+  if(best) onMarkerClick(best.id);
+});
+
+$('#swap').onclick=()=>{ const a=fromSel.value; fromSel.value=toSel.value; toSel.value=a; syncGo(); };
+$('#clear').onclick=()=>{ fromSel.value=''; toSel.value=''; clickTarget='from'; syncGo();
+  if(routeLayer){map.removeLayer(routeLayer);routeLayer=null;} endpointLayer.clearLayers();
+  $('#steps').innerHTML='<div class="empty">Pick a start and destination to see the exact route and turn‑by‑turn directions on the real map.</div>'; };
+$('#go').onclick=getDirections;
+
+/* ---------- OSRM real road routing ---------- */
+async function getDirections(){
+  const A=byId[fromSel.value], B=byId[toSel.value];
+  if(!A||!B) return;
+  $('#loading').style.display='flex';
+  try{
+    const url=`https://router.project-osrm.org/route/v1/driving/${A.lng},${A.lat};${B.lng},${B.lat}?overview=full&geometries=geojson&steps=true`;
+    const res=await fetch(url);
+    const data=await res.json();
+    if(data.code!=='Ok'||!data.routes.length){ throw new Error(data.message||'No route'); }
+    const route=data.routes[0];
+    drawRoute(route,A,B);
+    renderSteps(route,A,B);
+  }catch(err){
+    $('#steps').innerHTML=`<div class="empty">Couldn't reach the routing service.<br><small>${err.message}</small></div>`;
+  }finally{
+    $('#loading').style.display='none';
+  }
+}
+
+function drawRoute(route,A,B){
+  if(routeLayer) map.removeLayer(routeLayer);
+  endpointLayer.clearLayers();
+  const coords=route.geometry.coordinates.map(c=>[c[1],c[0]]); // [lng,lat] -> [lat,lng]
+  routeLayer=L.layerGroup([
+    L.polyline(coords,{color:'#93c5fd',weight:9,opacity:.9}),
+    L.polyline(coords,{color:'#1d4ed8',weight:4})
+  ]).addTo(map);
+  L.circleMarker([A.lat,A.lng],{radius:8,color:'#fff',weight:2,fillColor:'#10b981',fillOpacity:1}).addTo(endpointLayer).bindTooltip('Start',{permanent:true,direction:'top',className:'lbl'});
+  L.circleMarker([B.lat,B.lng],{radius:8,color:'#fff',weight:2,fillColor:'#2563eb',fillOpacity:1}).addTo(endpointLayer).bindTooltip('End',{permanent:true,direction:'top',className:'lbl'});
+  map.fitBounds(L.polyline(coords).getBounds(),{padding:[50,50]});
+}
+
+const DIR={'turn':'Turn','new name':'Continue','depart':'Head','arrive':'Arrive','merge':'Merge','on ramp':'Take ramp','off ramp':'Exit','fork':'Keep','end of road':'At end of road','roundabout':'Take roundabout','continue':'Continue'};
+function maneuverText(step){
+  const m=step.maneuver, mod=m.modifier?` ${m.modifier}`:'';
+  const base=DIR[m.type]||'Continue';
+  const road=step.name?` onto ${step.name}`:'';
+  if(m.type==='depart') return `${base} out${step.name?` on ${step.name}`:''}`;
+  if(m.type==='arrive') return `Arrive at destination`;
+  return `${base}${mod}${road}`.replace(' onto ','  onto ').trim();
+}
+function fmtDist(m){ return m>=1000?(m/1000).toFixed(2)+' km':Math.round(m)+' m'; }
+function fmtTime(s){ const m=Math.round(s/60); return m<1?'<1 min':m+' min'; }
+
+function renderSteps(route,A,B){
+  const steps=route.legs[0].steps;
+  let html=`<div class="summary">
+      <div><span class="k">Distance</span><span class="v">${fmtDist(route.distance)}</span></div>
+      <div style="text-align:right"><span class="k">Est. time</span><span class="v">${fmtTime(route.duration)}</span></div>
+    </div>
+    <div class="step"><div class="n">A</div><div class="txt"><b>Start · ${A.name}</b></div></div>`;
+  steps.forEach((s,i)=>{
+    if(s.maneuver.type==='depart') return;
+    html+=`<div class="step"><div class="n">${i}</div><div class="txt">
+      <b>${maneuverText(s)}</b><br><small>${fmtDist(s.distance)}</small></div></div>`;
+  });
+  html+=`<div class="step"><div class="n">B</div><div class="txt"><b>Arrive · ${B.name}</b></div></div>`;
+  $('#steps').innerHTML=html;
+}
+</script>
+</body>
+</html>

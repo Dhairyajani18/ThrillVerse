@@ -1,0 +1,48 @@
+# Environment variables and secrets
+.env
+.env.*
+*.env
+!.env.example
+
+# Databases & SQLite
+*.sqlite3
+*.db
+db.sqlite3
+
+# Dependency directories
+node_modules/
+jspm_packages/
+web_modules/
+
+# Python cache & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+venv/
+ENV/
+env/
+
+# Build & Output directories
+dist/
+build/
+.next/
+out/
+.cache/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db

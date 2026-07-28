@@ -1,0 +1,50 @@
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+
+@keyframes leafletDash {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+
+.leaflet-animated-route-line {
+  animation: leafletDash 1.2s linear infinite;
+}
+
+.custom-leaflet-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.premium-park-popup .leaflet-popup-content-wrapper {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border-radius: 1rem !important;
+}
+
+.premium-park-popup .leaflet-popup-content {
+  margin: 0 !important;
+  width: 100% !important;
+}
+
+.premium-park-popup .leaflet-popup-tip {
+  background: #0f172a !important;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  white-space: nowrap;
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}

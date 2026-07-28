@@ -1,0 +1,11 @@
+{
+  "name": "thrillverse",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "npm run dev --prefix fronted/fronted",
+    "dev:backend": "python manage.py runserver",
+    "dev:email": "node email_service/server.js",
+    "install:frontend": "npm install --prefix fronted/fronted",
+    "install:email": "npm install --prefix email_service"
+  }
+}

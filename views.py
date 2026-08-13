@@ -73,45 +73,8 @@ def train_wait_time_model():
         pickle.dump(model, f)
     print("-> saved wait_time_model.pkl")
 
-# =====================================================================
-# 3. RIDE RECOMMENDATION ENGINE
-# =====================================================================
-def train_recommendation_model():
-    print("Training Ride Recommendation Engine...")
-    np.random.seed(42)
-    n_samples = 800
-    
-    data = {
-        'user_age': np.random.randint(5, 65, n_samples),
-        'thrill_preference': np.random.choice([1, 2, 3], n_samples, p=[0.3, 0.4, 0.3])
-    }
-    df = pd.DataFrame(data)
-    
-    def assign_ride(row):
-        if row['user_age'] < 10 and row['thrill_preference'] == 1:
-            return 'Kids Carousel'
-        elif row['user_age'] > 12 and row['thrill_preference'] == 3:
-            return 'Mega Rollercoaster'
-        elif row['thrill_preference'] == 2:
-            return 'Water Splash Log Ride'
-        else:
-            return 'Ferris Wheel'
-            
-    df['recommended_ride'] = df.apply(assign_ride, axis=1)
-    
-    X = df[['user_age', 'thrill_preference']]
-    y = df['recommended_ride']
-    
-    model = RandomForestClassifier(n_estimators=50, random_state=42)
-    model.fit(X, y)
-    
-    with open(os.path.join(target_dir, 'recommendation_model.pkl'), 'wb') as f:
-        pickle.dump(model, f)
-    print("-> saved recommendation_model.pkl")
-
 if __name__ == "__main__":
     print(f"Writing fresh model data directly to: {target_dir}\n")
     train_crowd_model()
     train_wait_time_model()
-    train_recommendation_model()
     print("\n All files successfully populated with fresh data!")

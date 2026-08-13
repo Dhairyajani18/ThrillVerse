@@ -56,8 +56,7 @@ def sync_ride_state(ride):
             for q in past_queues:
                 q.status = 'completed'
                 q.completed_at = now
-                q.xp_earned = 50
-                q.save(update_fields=['status', 'completed_at', 'xp_earned'])
+                q.save(update_fields=['status', 'completed_at'])
                 
                 # Update user stats
                 stats, _ = UserQueueStats.objects.get_or_create(user=q.user)
@@ -213,6 +212,70 @@ def get_ride_snapshot(ride, user=None):
                 "joined_at": user_queue.joined_at.isoformat()
             }
 
+    is_admin = bool(user and user.is_authenticated and (user.is_staff or user.is_superuser))
+
+    # Build list of active batches for Admin Dashboard
+    active_batches = []
+    if total_queue_count > 0:
+        cycle_seconds = (ride.duration_seconds or 180) + (ride.loading_seconds or 120)
+        cycle_minutes = max(1, math.ceil(cycle_seconds / 60))
+
+        batch_stats = active_queues.values('batch_number').annotate(
+            passengers=models.Count('id'),
+            min_pos=models.Min('position'),
+            max_pos=models.Max('position')
+        ).order_by('batch_number')
+
+        for b in batch_stats:
+            b_num = b['batch_number']
+            passengers = b['passengers']
+            min_p = b['min_pos']
+            max_p = b['max_pos']
+            pos_range = f"#{min_p} - #{max_p}" if min_p is not None and max_p is not None else "—"
+
+            b_offset = max(0, b_num - ride.current_batch_number)
+
+            if b_num == ride.current_batch_number:
+                b_status = 'Boarding' if timing['phase'] == 'loading' else 'Riding'
+                start_str = "Now (0m)"
+                end_str = f"In {cycle_minutes}m"
+            elif b_num < ride.current_batch_number:
+                b_status = 'Completed'
+                start_str = "Completed"
+                end_str = "Completed"
+            else:
+                b_status = 'Waiting'
+                start_m = b_offset * cycle_minutes
+                end_m = (b_offset + 1) * cycle_minutes
+                start_str = f"In {start_m}m"
+                end_str = f"In {end_m}m"
+
+            b_wait = calculate_wait_time(ride, b_num)
+            active_batches.append({
+                "batch_number": b_num,
+                "passengers": passengers,
+                "capacity": capacity,
+                "occupancy_display": f"{passengers}/{capacity}",
+                "position_range": pos_range,
+                "status": b_status,
+                "estimated_start_time": start_str,
+                "estimated_end_time": end_str,
+                "estimated_wait_minutes": b_wait['wait_minutes'],
+                "batches_ahead": b_offset
+            })
+
+    zone_map = {
+        'thrill': 'Zone A',
+        'water': 'Zone B',
+        'family': 'Zone C',
+        'kids': 'Zone D',
+        'vr': 'Zone E'
+    }
+    cat_lower = (ride.category or '').lower()
+    calculated_zone = zone_map.get(cat_lower, 'Zone A')
+    calculated_duration = f"{ride.duration_minutes or 2} min"
+    calculated_height = f"{ride.min_height_cm} cm" if ride.min_height_cm else "None"
+
     return {
         "id": ride.id,
         "name": ride.name,
@@ -221,6 +284,9 @@ def get_ride_snapshot(ride, user=None):
         "thrill_level": ride.thrill_level,
         "capacity": capacity,
         "duration_minutes": ride.duration_minutes,
+        "duration": calculated_duration,
+        "zone": calculated_zone,
+        "height": calculated_height,
         "min_height_cm": ride.min_height_cm,
         "rating": float(ride.rating) if ride.rating is not None else 4.50,
         "status": ride.status,
@@ -235,6 +301,8 @@ def get_ride_snapshot(ride, user=None):
         "current_batch_occupancy": current_batch_count,
         "remaining_seats_in_batch": remaining_seats,
         "total_queue_count": total_queue_count,
+        "total_active_batches": len(active_batches),
+        "active_batches": active_batches,
         "current_wait_time": next_wait['wait_minutes'],
         "status_code": status_code,
         "status_label": status_label,

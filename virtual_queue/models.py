@@ -105,8 +105,15 @@ class VirtualQueue(models.Model):
     boarding_time = models.DateTimeField(null=True, blank=True)
     completed_at = models.DateTimeField(null=True, blank=True)
     cancelled_at = models.DateTimeField(null=True, blank=True)
-    xp_earned = models.PositiveIntegerField(default=0)
     email_sent = models.BooleanField(default=False)
+
+    @property
+    def qr_ticket(self):
+        try:
+            from .services.qr_service import generate_qr_ticket
+            return generate_qr_ticket(self.user, self)
+        except Exception:
+            return f"https://api.qrserver.com/v1/create-qr-code/?size=250x250&data={self.token or 'TV-PASS'}"
 
     def save(self, *args, **kwargs):
         if not self.token:

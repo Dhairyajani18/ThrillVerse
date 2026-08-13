@@ -10,6 +10,7 @@ class RideSerializer(serializers.ModelSerializer):
     category = serializers.SerializerMethodField()
     duration = serializers.SerializerMethodField()
     height = serializers.SerializerMethodField()
+    zone = serializers.SerializerMethodField()
     snapshot = serializers.SerializerMethodField()
 
     class Meta:
@@ -18,7 +19,7 @@ class RideSerializer(serializers.ModelSerializer):
             'id', 'name', 'emoji', 'category', 'thrill_level', 'capacity',
             'duration_minutes', 'min_height_cm', 'rating', 'status',
             'queue_enabled', 'max_queue_size', 'current_wait_time',
-            'active_queue_count', 'is_joinable', 'img', 'duration', 'height',
+            'active_queue_count', 'is_joinable', 'img', 'duration', 'height', 'zone',
             'loading_seconds', 'duration_seconds', 'current_batch_number',
             'current_phase', 'snapshot'
         )
@@ -32,6 +33,18 @@ class RideSerializer(serializers.ModelSerializer):
             'vr': 'VR'
         }
         return cat_map.get(obj.category.lower(), obj.category.capitalize())
+
+    def get_zone(self, obj):
+        cat = obj.category.lower()
+        if 'thrill' in cat:
+            return 'Thriller Zone'
+        elif 'water' in cat:
+            return 'Water Zone'
+        elif 'family' in cat:
+            return 'Family Zone'
+        elif 'kids' in cat:
+            return 'Kids Zone'
+        return f"{obj.category.capitalize()} Zone"
 
     def get_duration(self, obj):
         return f"{obj.duration_minutes} min" if obj.duration_minutes else "None"
@@ -58,7 +71,7 @@ class VirtualQueueSerializer(serializers.ModelSerializer):
         model = VirtualQueue
         fields = (
             'id', 'token', 'position', 'batch_number', 'status', 'estimated_wait',
-            'boarding_time', 'joined_at', 'completed_at', 'xp_earned', 'ride', 'batches_ahead'
+            'boarding_time', 'joined_at', 'completed_at', 'ride', 'batches_ahead'
         )
 
     def get_batches_ahead(self, obj):
@@ -157,7 +170,7 @@ class QueueHistorySerializer(serializers.ModelSerializer):
         model = VirtualQueue
         fields = (
             'id', 'token', 'ride_name', 'ride_emoji', 'status',
-            'joined_at', 'completed_at', 'wait_minutes', 'xp_earned'
+            'joined_at', 'completed_at', 'wait_minutes'
         )
 
     def get_wait_minutes(self, obj):
@@ -221,4 +234,5 @@ class TicketSerializer(serializers.ModelSerializer):
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
+        fields = '__all__'
         fields = '__all__'

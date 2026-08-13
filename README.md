@@ -29,17 +29,6 @@ http://127.0.0.1:8000/api/predict-wait-time
 }
 
 
-http://127.0.0.1:8000/api/recommend-rides
-{
-    "user_age": 22,
-    "thrill_preference": 3
-}
-=======Answer========
-{
-    "status": "success",
-    "recommended_ride": "Mega Rollercoaster"
-}
-
 🔐 Credentials Reminder
 Admin Email: admin@thrillverse.com
 Admin Password: admin@123

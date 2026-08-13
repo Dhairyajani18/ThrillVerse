@@ -14,11 +14,9 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         username = attrs.get("username")
         if username and "@" in username:
-            try:
-                user = User.objects.get(email=username)
+            user = User.objects.filter(email__iexact=username.strip()).first()
+            if user:
                 attrs["username"] = user.username
-            except User.DoesNotExist:
-                pass
         data = super().validate(attrs)
         return {
             "message": "Login Successful",

@@ -74,7 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const newAccess = data.access;
           localStorage.setItem("token", newAccess);
           setToken(newAccess);
-          
+
           return await verifyAndLoadProfile(newAccess);
         }
       } catch (e) {
@@ -139,7 +139,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.setItem("token", data.tokens.access);
         localStorage.setItem("refresh_token", data.tokens.refresh);
         setToken(data.tokens.access);
-        
+
         await verifyAndLoadProfile(data.tokens.access);
         return { success: true };
       } else {

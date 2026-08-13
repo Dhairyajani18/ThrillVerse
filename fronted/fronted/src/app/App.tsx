@@ -884,7 +884,7 @@ function HomePage({ setPage, rides, restaurants = RESTAURANTS, setSelectedQueueR
                     <img src={ride.img} alt={ride.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                     <div className="absolute inset-0" style={{ background: "linear-gradient(to top,rgba(13,31,60,0.55) 0%,transparent 55%)" }} />
                     <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-bold" style={{ background: cs.bg, color: cs.text }}>{ride.category}</span>
-                    
+
                     {ride.status === 'closed' && (
                       <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[10px] font-black uppercase bg-rose-600 text-white shadow-md">
                         CLOSED 🚫
@@ -910,7 +910,6 @@ function HomePage({ setPage, rides, restaurants = RESTAURANTS, setSelectedQueueR
                     </div>
                     <div className="flex items-center gap-2 mb-3"><span className="text-xs" style={{ color: "#5a78a8" }}>Thrill</span><ThrillDots level={ride.thrill} /></div>
                     <div className="flex items-center gap-3 text-xs mb-4" style={{ color: "#5a78a8" }}>
-                      <span className="flex items-center gap-1"><Play size={10} />{ride.duration}</span>
                       <span className="flex items-center gap-1"><Users size={10} />{ride.visitors}</span>
                       <span>↑ {ride.height}</span>
                     </div>
@@ -918,20 +917,19 @@ function HomePage({ setPage, rides, restaurants = RESTAURANTS, setSelectedQueueR
                       <button
                         disabled={isClosed}
                         onClick={() => { if (!isClosed) { setSelectedQueueRide(ride); setPage(PAGES.VIRTUAL_QUEUE); } }}
-                        className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
-                          isClosed
+                        className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${isClosed
                             ? "bg-slate-200 text-slate-500 cursor-not-allowed border border-slate-300 shadow-none opacity-80"
                             : "text-white hover:shadow-md cursor-pointer"
-                        }`}
+                          }`}
                         style={{ background: isClosed ? "#e2e8f0" : `linear-gradient(135deg,${BLUE},${BLUE2})` }}
                       >
                         {ride.status === 'closed'
                           ? 'Closed 🚫'
                           : ride.status === 'maintenance'
-                          ? 'Under Maintenance 🛠️'
-                          : isClosed
-                          ? 'Queue Paused ⏸️'
-                          : 'Join Queue'}
+                            ? 'Under Maintenance 🛠️'
+                            : isClosed
+                              ? 'Queue Paused ⏸️'
+                              : 'Join Queue'}
                       </button>
                       <button onClick={() => setSelectedRideDetail(ride)} className="px-3 py-2 rounded-xl text-xs font-bold transition-all hover:bg-[#eef4ff] cursor-pointer" style={{ border: `1.5px solid ${BLUE}22`, color: BLUE }}>Details</button>
                     </div>
@@ -997,7 +995,7 @@ function HomePage({ setPage, rides, restaurants = RESTAURANTS, setSelectedQueueR
                     <img src={r.img} alt={r.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                     <div className="absolute inset-0" style={{ background: "linear-gradient(to top,rgba(0,0,0,0.45) 0%,transparent 55%)" }} />
                     <span className="absolute top-3 left-3 text-xl drop-shadow">{r.emoji}</span>
-                    
+
                     {r.status === 'closed' && (
                       <span className="absolute top-3 right-3 px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-rose-600 text-white shadow-md">
                         CLOSED 🚫
@@ -1037,18 +1035,17 @@ function HomePage({ setPage, rides, restaurants = RESTAURANTS, setSelectedQueueR
                     <button
                       disabled={isRestClosed}
                       onClick={() => !isRestClosed && setSelectedRestaurant(r)}
-                      className={`w-full py-2 rounded-xl text-xs font-bold transition-all ${
-                        isRestClosed
+                      className={`w-full py-2 rounded-xl text-xs font-bold transition-all ${isRestClosed
                           ? "bg-slate-200 text-slate-500 cursor-not-allowed border border-slate-300 shadow-none opacity-80"
                           : "text-white hover:shadow-md cursor-pointer"
-                      }`}
+                        }`}
                       style={{ background: isRestClosed ? "#e2e8f0" : `linear-gradient(135deg,${r.color},${r.color}bb)` }}
                     >
                       {r.status === 'closed'
                         ? 'Closed 🚫'
                         : r.status === 'maintenance'
-                        ? 'Under Maintenance 🛠️'
-                        : 'View Menu & Info →'}
+                          ? 'Under Maintenance 🛠️'
+                          : 'View Menu & Info →'}
                     </button>
                   </div>
                 </div>
@@ -1489,9 +1486,6 @@ function RideDetailModal({ ride, onClose, onJoinQueue }: { ride: any; onClose: (
             <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold" style={{ background: "#eef4ff", color: BLUE }}>
               <Clock size={11} /> {ride.wait} min wait
             </span>
-            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold" style={{ background: "#f0fdf4", color: GREEN }}>
-              <Play size={11} /> {ride.duration}
-            </span>
             <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold" style={{ background: "#fff0ea", color: thrillColor }}>
               <Flame size={11} /> {thrillLabel} Thrill
             </span>
@@ -1507,7 +1501,6 @@ function RideDetailModal({ ride, onClose, onJoinQueue }: { ride: any; onClose: (
             {[
               { label: "📏 Height Req.", value: ride.height === "None" ? "No restriction" : `Min ${ride.height}` },
               { label: "🎂 Min Age", value: extra?.minAge ?? ride.age },
-              { label: "⏱️ Duration", value: ride.duration },
               { label: "👥 Capacity", value: extra ? `${extra.capacity} guests / ride` : "—" },
               { label: "📍 Zone", value: ride.zone },
               { label: "🔥 Thrill", value: `${thrillLabel} (${ride.thrill}/5)` },
@@ -1553,20 +1546,19 @@ function RideDetailModal({ ride, onClose, onJoinQueue }: { ride: any; onClose: (
                 <button
                   onClick={() => { if (!isClosed) { onJoinQueue(); onClose(); } }}
                   disabled={isClosed}
-                  className={`flex-1 py-3 rounded-2xl text-sm font-bold transition-all ${
-                    isClosed
+                  className={`flex-1 py-3 rounded-2xl text-sm font-bold transition-all ${isClosed
                       ? "bg-slate-200 text-slate-500 cursor-not-allowed border border-slate-300 shadow-none opacity-80"
                       : "text-white hover:shadow-lg cursor-pointer"
-                  }`}
+                    }`}
                   style={{ background: isClosed ? "#e2e8f0" : `linear-gradient(135deg,${BLUE},${BLUE2})` }}
                 >
                   {ride.status === "closed"
                     ? "Closed 🚫"
                     : ride.status === "maintenance"
-                    ? "Under Maintenance 🛠️"
-                    : isClosed
-                    ? "Queue Paused ⏸️"
-                    : "Join Queue"}
+                      ? "Under Maintenance 🛠️"
+                      : isClosed
+                        ? "Queue Paused ⏸️"
+                        : "Join Queue"}
                 </button>
                 <button
                   onClick={onClose}
@@ -1719,7 +1711,7 @@ function ExplorePage({ setPage, rides, setSelectedQueueRide }: { setPage: (p: st
                   <img src={ride.img} alt={ride.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                   <div className="absolute inset-0" style={{ background: "linear-gradient(to top,rgba(13,31,60,0.55) 0%,transparent 55%)" }} />
                   <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: cs.bg, color: cs.text }}>{ride.category}</span>
-                  
+
                   {ride.status === "closed" && (
                     <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-rose-600 text-white shadow-md">
                       Closed 🚫
@@ -1745,26 +1737,25 @@ function ExplorePage({ setPage, rides, setSelectedQueueRide }: { setPage: (p: st
                   </div>
                   <div className="flex items-center gap-1.5 mb-2"><span className="text-xs" style={{ color: "#5a78a8" }}>Thrill</span><ThrillDots level={ride.thrill} /></div>
                   <div className="flex items-center justify-between text-xs mb-3" style={{ color: "#5a78a8" }}>
-                    <span>{ride.duration}</span><span>↑ {ride.height}</span><span>{ride.zone}</span>
+                    <span>↑ {ride.height}</span><span>{ride.zone}</span>
                   </div>
                   <div className="flex gap-2">
                     <button
                       disabled={isClosed}
                       onClick={() => { if (!isClosed) { setSelectedQueueRide(ride); setPage(PAGES.VIRTUAL_QUEUE); } }}
-                      className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                        isClosed
+                      className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition-all ${isClosed
                           ? "bg-slate-200 text-slate-500 cursor-not-allowed border border-slate-300 shadow-none opacity-80"
                           : "text-white hover:shadow-md cursor-pointer"
-                      }`}
+                        }`}
                       style={{ background: isClosed ? "#e2e8f0" : `linear-gradient(135deg,${BLUE},${BLUE2})` }}
                     >
                       {ride.status === "closed"
                         ? "Closed 🚫"
                         : ride.status === "maintenance"
-                        ? "Under Maintenance 🛠️"
-                        : isClosed
-                        ? "Queue Paused ⏸️"
-                        : "Join Queue"}
+                          ? "Under Maintenance 🛠️"
+                          : isClosed
+                            ? "Queue Paused ⏸️"
+                            : "Join Queue"}
                     </button>
                     <button onClick={() => setSelectedRideDetail(ride)} className="px-3 py-1.5 rounded-xl text-xs font-bold transition-all hover:bg-[#eef4ff] cursor-pointer" style={{ border: `1.5px solid ${BLUE}22`, color: BLUE }}>
                       Details
@@ -1920,7 +1911,7 @@ function TicketsPage({ selectedPromo, onClearPromo, userTickets, setUserTickets,
     const nameLower = (off.name || off.title || '').toLowerCase();
     const codeLower = (off.promo_code || off.code || '').toLowerCase();
     const match = defaultOffersList.find(d => d.code === off.promo_code || d.title.toLowerCase().includes(nameLower) || nameLower.includes(d.title.toLowerCase()));
-    
+
     let matchedImg = match ? match.img : null;
     if (nameLower.includes('golden') || codeLower.includes('golden')) matchedImg = goldenHourPassImg;
 
@@ -2096,60 +2087,60 @@ function TicketsPage({ selectedPromo, onClearPromo, userTickets, setUserTickets,
             <div className="w-20 h-1 bg-[#f97316] mx-auto mt-4 rounded-full" />
           </div>
 
-            {/* List of Offers dynamically fetched from Admin */}
-            <div className="flex flex-col gap-6 max-w-4xl mx-auto">
-              {displayOffers.map((offer, i) => {
-                const isExpanded = !!expandedOffers[i];
-                return (
-                  <div
-                    key={i}
-                    className="flex flex-col md:flex-row bg-white border border-[#d1d5db] p-3 gap-6 rounded-none transition-all duration-300 animate-fadeIn"
-                  >
-                    <div className="w-full md:w-5/12 h-56 md:h-auto min-h-[220px] relative shrink-0 overflow-hidden bg-slate-100">
-                      <img src={offer.img} alt={offer.title} className="w-full h-full object-cover rounded-none" />
+          {/* List of Offers dynamically fetched from Admin */}
+          <div className="flex flex-col gap-6 max-w-4xl mx-auto">
+            {displayOffers.map((offer, i) => {
+              const isExpanded = !!expandedOffers[i];
+              return (
+                <div
+                  key={i}
+                  className="flex flex-col md:flex-row bg-white border border-[#d1d5db] p-3 gap-6 rounded-none transition-all duration-300 animate-fadeIn"
+                >
+                  <div className="w-full md:w-5/12 h-56 md:h-auto min-h-[220px] relative shrink-0 overflow-hidden bg-slate-100">
+                    <img src={offer.img} alt={offer.title} className="w-full h-full object-cover rounded-none" />
+                  </div>
+                  <div className="p-4 flex-grow flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-xl font-bold mb-3" style={{ color: BLUE }}>
+                        {offer.title}
+                      </h3>
+                      <ul className="list-disc pl-5 space-y-1.5 text-slate-700 text-sm mb-4">
+                        {offer.bullets.map((b, idx) => (
+                          <li key={idx}>{b}</li>
+                        ))}
+                        <li className="font-semibold text-slate-900">
+                          Promo Code: <span className="bg-amber-100 text-amber-900 font-mono font-extrabold px-2 py-0.5 rounded border border-amber-300 select-all tracking-wider ml-1">{offer.code}</span>
+                        </li>
+                      </ul>
+                      <button
+                        onClick={() => toggleOfferExpand(i)}
+                        className="hover:underline font-semibold text-sm text-left mb-4 focus:outline-none block"
+                        style={{ color: BLUE }}
+                      >
+                        {isExpanded ? "Read Less ↑" : "Read More ↓"}
+                      </button>
+                      {isExpanded && (
+                        <p className="text-xs text-slate-500 mb-4 bg-slate-50 p-4 rounded-none border border-slate-100 leading-relaxed animate-fadeIn">
+                          {offer.longDesc}
+                        </p>
+                      )}
                     </div>
-                    <div className="p-4 flex-grow flex flex-col justify-between">
-                      <div>
-                        <h3 className="text-xl font-bold mb-3" style={{ color: BLUE }}>
-                          {offer.title}
-                        </h3>
-                        <ul className="list-disc pl-5 space-y-1.5 text-slate-700 text-sm mb-4">
-                          {offer.bullets.map((b, idx) => (
-                            <li key={idx}>{b}</li>
-                          ))}
-                          <li className="font-semibold text-slate-900">
-                            Promo Code: <span className="bg-amber-100 text-amber-900 font-mono font-extrabold px-2 py-0.5 rounded border border-amber-300 select-all tracking-wider ml-1">{offer.code}</span>
-                          </li>
-                        </ul>
-                        <button
-                          onClick={() => toggleOfferExpand(i)}
-                          className="hover:underline font-semibold text-sm text-left mb-4 focus:outline-none block"
-                          style={{ color: BLUE }}
-                        >
-                          {isExpanded ? "Read Less ↑" : "Read More ↓"}
-                        </button>
-                        {isExpanded && (
-                          <p className="text-xs text-slate-500 mb-4 bg-slate-50 p-4 rounded-none border border-slate-100 leading-relaxed animate-fadeIn">
-                            {offer.longDesc}
-                          </p>
-                        )}
-                      </div>
-                      <div>
-                        <button
-                          onClick={() => onBookOfferClick(offer.title)}
-                          className="px-6 py-2.5 text-sm font-bold text-white transition-all hover:opacity-90 active:scale-[0.98] rounded-none cursor-pointer"
-                          style={{ background: `linear-gradient(135deg, ${BLUE}, ${BLUE2})` }}
-                        >
-                          Book Now
-                        </button>
-                      </div>
+                    <div>
+                      <button
+                        onClick={() => onBookOfferClick(offer.title)}
+                        className="px-6 py-2.5 text-sm font-bold text-white transition-all hover:opacity-90 active:scale-[0.98] rounded-none cursor-pointer"
+                        style={{ background: `linear-gradient(135deg, ${BLUE}, ${BLUE2})` }}
+                      >
+                        Book Now
+                      </button>
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
           </div>
-        ) : (
+        </div>
+      ) : (
         <div>
           {!isAuthenticated ? (
             <div className="p-12 rounded-3xl bg-slate-50 text-center border-2 border-dashed border-slate-200 max-w-md mx-auto my-8">
@@ -4297,33 +4288,51 @@ function AppContent() {
   }, [isAuthenticated, userProfile, redirectToAfterLogin, postLoginAction, hasRedirectedAdmin]);
 
   const fetchParkData = () => {
-    fetch("http://127.0.0.1:8000/queue/rides/")
+    const token = localStorage.getItem("access_token");
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    fetch("http://127.0.0.1:8000/queue/rides/", { headers })
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
-          const mapped = data.map(r => ({
-            ...r,
-            thrill: r.thrill_level,
-            duration: r.duration,
-            height: r.height,
-            wait: r.current_wait_time,
-            img: r.id === 1 ? IMG.nitro :
-              r.id === 2 ? IMG.scream :
-                r.id === 3 ? IMG.spacex :
-                  r.id === 4 ? IMG.drop :
-                    r.id === 5 ? IMG.dino :
-                      r.id === 6 ? IMG.splashAhoy :
-                        r.id === 7 ? IMG.goldRush :
-                          r.id === 8 ? IMG.alibaba :
-                            r.id === 9 ? IMG.bhangarh :
-                              r.id === 10 ? IMG.chaiSpin :
-                                r.id === 11 ? IMG.wrath :
-                                  r.id === 12 ? IMG.carousel :
-                                    r.id === 13 ? IMG.chhotaBheem :
-                                      r.id === 14 ? IMG.elephantRide :
-                                        r.id === 15 ? IMG.miniFall :
-                                          r.id === 16 ? IMG.cinema360 : r.img
-          }));
+          const mapped = data.map(r => {
+            const defaultInfo = ALL_RIDES.find(item => item.id === r.id || item.name.toLowerCase() === r.name?.toLowerCase());
+            const catLower = (r.category || '').toLowerCase();
+            const zone = r.zone || defaultInfo?.zone || (
+              catLower === 'thrill' || catLower === 'thriller' ? 'Zone A' :
+              catLower === 'water' ? 'Zone B' :
+              catLower === 'kids' ? 'Zone D' : 'Zone C'
+            );
+            const duration = r.duration || (r.duration_minutes ? `${r.duration_minutes} min` : defaultInfo?.duration || "2 min");
+            const height = r.height || (r.min_height_cm ? `${r.min_height_cm} cm` : defaultInfo?.height || "None");
+
+            return {
+              ...r,
+              thrill: r.thrill_level ?? r.thrill,
+              duration,
+              height,
+              zone,
+              wait: r.current_wait_time ?? r.wait,
+              img: r.id === 1 ? IMG.nitro :
+                r.id === 2 ? IMG.scream :
+                  r.id === 3 ? IMG.spacex :
+                    r.id === 4 ? IMG.drop :
+                      r.id === 5 ? IMG.dino :
+                        r.id === 6 ? IMG.splashAhoy :
+                          r.id === 7 ? IMG.goldRush :
+                            r.id === 8 ? IMG.alibaba :
+                              r.id === 9 ? IMG.bhangarh :
+                                r.id === 10 ? IMG.chaiSpin :
+                                  r.id === 11 ? IMG.wrath :
+                                    r.id === 12 ? IMG.carousel :
+                                      r.id === 13 ? IMG.chhotaBheem :
+                                        r.id === 14 ? IMG.elephantRide :
+                                          r.id === 15 ? IMG.miniFall :
+                                            r.id === 16 ? IMG.cinema360 : (r.img || defaultInfo?.img)
+            };
+          });
           setRides(mapped);
         }
       })

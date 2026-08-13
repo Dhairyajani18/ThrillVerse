@@ -14,6 +14,7 @@ import miniFallImg from '@/assets/mini_fall.jpg';
 import carouselImg from '@/assets/magic_carousel.jpg';
 import chhotaBheemImg from '@/assets/chhota_bheem.jpg';
 import goldRushImg from '@/assets/gold_rush_express.jpg';
+import castleImg from '@/assets/thrillverse-castle.jpg';
 
 export type LocationType = 'ride' | 'restaurant' | 'facility' | 'event' | 'zone' | 'entrance';
 
@@ -365,7 +366,7 @@ export const PARK_LOCATIONS: ParkLocation[] = [
     status: 'open',
     coords: [420, 512],
     description: 'The iconic centerpiece castle featuring royal balcony photo lookouts, souvenir galleries, and night laser shows.',
-    image: 'https://images.unsplash.com/photo-1533575510629-9e8d19760086?auto=format&fit=crop&q=80&w=600',
+    image: castleImg,
     zoneId: 'center',
     zoneName: 'Castle Plaza',
   },

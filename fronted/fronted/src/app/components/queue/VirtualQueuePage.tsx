@@ -90,6 +90,7 @@ export default function VirtualQueuePage({ selectedRideProp, onClearSelectedRide
   // Modals & Takeovers
   const [isQrOpen, setIsQrOpen] = useState(false);
   const [isBoardingTakeover, setIsBoardingTakeover] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Loading states
@@ -123,6 +124,7 @@ export default function VirtualQueuePage({ selectedRideProp, onClearSelectedRide
     const res = await login(username, password);
     if (res.success) {
       notifyAuthSuccess("login", username);
+      setIsAuthModalOpen(false);
       loadAllData();
     } else {
       setErrorMsg(res.error || "Invalid credentials.");
@@ -159,6 +161,7 @@ export default function VirtualQueuePage({ selectedRideProp, onClearSelectedRide
     const res = await register(payload);
     if (res.success) {
       notifyAuthSuccess("login", username);
+      setIsAuthModalOpen(false);
       loadAllData();
     } else {
       setErrorMsg(res.error || "Registration failed.");
@@ -176,7 +179,11 @@ export default function VirtualQueuePage({ selectedRideProp, onClearSelectedRide
   const loadRides = async () => {
     setLoadingRides(true);
     try {
-      const res = await fetch(`${API_URL}/queue/rides/`);
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      const res = await fetch(`${API_URL}/queue/rides/`, { headers });
       if (res.ok) {
         const data = await res.json();
         setRides(data);
@@ -325,7 +332,7 @@ export default function VirtualQueuePage({ selectedRideProp, onClearSelectedRide
     if (!selectedRide) return;
     if (!token) {
       showToast("Please log in to join the virtual queue.");
-      setTab("dashboard");
+      setIsAuthModalOpen(true);
       return;
     }
     setLoadingAction(true);
@@ -434,7 +441,7 @@ export default function VirtualQueuePage({ selectedRideProp, onClearSelectedRide
     return path;
   };
 
-  // Auth Required Guard UI
+  // Auth Required Guard UI - direct sign in page when not logged in
   if (!token) {
     return (
       <div className={`${authMode === "register" ? "max-w-2xl" : "max-w-md"} mx-auto my-8 px-6 sm:px-10 py-8 rounded-3xl bg-white/90 backdrop-blur-xl border border-blue-100 shadow-2xl relative overflow-hidden transition-all duration-300`} style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -695,7 +702,7 @@ export default function VirtualQueuePage({ selectedRideProp, onClearSelectedRide
           </h1>
           <p className="text-sm text-[#5a78a8] mt-1">Smart AI-powered park boarding, zero physical queue lines.</p>
         </div>
-        {userProfile && (
+        {userProfile ? (
           <div className="flex items-center gap-3 bg-slate-50 border border-slate-100 rounded-2xl p-2.5 pr-4 shadow-sm">
             <div className="w-10 h-10 rounded-xl bg-[#eef4ff] text-[#1a6ef5] flex items-center justify-center font-black text-sm">
               {userProfile.user.first_name ? userProfile.user.first_name[0] : userProfile.user.username[0].toUpperCase()}
@@ -714,6 +721,14 @@ export default function VirtualQueuePage({ selectedRideProp, onClearSelectedRide
               Logout
             </button>
           </div>
+        ) : (
+          <button
+            onClick={() => setIsAuthModalOpen(true)}
+            className="px-5 py-2.5 rounded-2xl font-bold text-xs text-white shadow-lg shadow-blue-500/20 transition-all hover:scale-[1.02] cursor-pointer"
+            style={{ background: "linear-gradient(135deg, #1a6ef5, #0052cc)" }}
+          >
+            Sign In / Register
+          </button>
         )}
       </div>
 
@@ -746,19 +761,19 @@ export default function VirtualQueuePage({ selectedRideProp, onClearSelectedRide
       {/* ─── SCREEN 1 & 2: DASHBOARD TAB ─── */}
       {tab === "dashboard" && (
         <div className="max-w-4xl mx-auto space-y-6">
-            {activeQueue ? (
-              /* SCREEN 1: ACTIVE QUEUE VIEW */
-              <div
-                className="p-6 sm:p-8 rounded-3xl bg-white/80 backdrop-blur-xl border border-blue-100/50 shadow-2xl relative overflow-hidden transition-all duration-300 hover:translate-y-[-3px] hover:shadow-[0_20px_40px_rgba(26,110,245,0.15)] animate-[glow-pulse_3s_infinite]"
-                style={{
-                  boxShadow: "0 10px 40px rgba(26, 110, 245, 0.12)",
-                  animationName: "glow-pulse",
-                  animationDuration: "4s",
-                  animationIterationCount: "infinite"
-                }}
-              >
-                {/* Glow Animation Style block */}
-                <style>{`
+          {activeQueue ? (
+            /* SCREEN 1: ACTIVE QUEUE VIEW */
+            <div
+              className="p-6 sm:p-8 rounded-3xl bg-white/80 backdrop-blur-xl border border-blue-100/50 shadow-2xl relative overflow-hidden transition-all duration-300 hover:translate-y-[-3px] hover:shadow-[0_20px_40px_rgba(26,110,245,0.15)] animate-[glow-pulse_3s_infinite]"
+              style={{
+                boxShadow: "0 10px 40px rgba(26, 110, 245, 0.12)",
+                animationName: "glow-pulse",
+                animationDuration: "4s",
+                animationIterationCount: "infinite"
+              }}
+            >
+              {/* Glow Animation Style block */}
+              <style>{`
                   @keyframes glow-pulse {
                     0% { box-shadow: 0 10px 30px rgba(26, 110, 245, 0.12); border-color: rgba(26, 110, 245, 0.2); }
                     50% { box-shadow: 0 10px 45px rgba(6, 182, 212, 0.25); border-color: rgba(6, 182, 212, 0.3); }
@@ -766,236 +781,236 @@ export default function VirtualQueuePage({ selectedRideProp, onClearSelectedRide
                   }
                 `}</style>
 
-                {/* Header Row */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-                  <div>
-                    <span className="text-xs font-bold text-[#1a6ef5] tracking-widest uppercase bg-[#eef4ff] px-3 py-1 rounded-full">Active Reservation</span>
-                    <h2 className="text-2xl sm:text-3xl font-black text-[#0d1f3c] tracking-tight mt-2.5 flex items-center gap-2" style={{ fontFamily: "'Exo 2', sans-serif" }}>
-                      {activeQueue.ride.emoji} {activeQueue.ride.name}
-                    </h2>
-                  </div>
-                  <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-gradient-to-r from-[#1a6ef5] to-[#0052cc] text-white shadow-md w-fit">
-                    <span className="font-mono text-xs font-semibold">#</span>
-                    <span className="font-poppins font-black text-sm tracking-wide">{activeQueue.token}</span>
-                  </div>
+              {/* Header Row */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <div>
+                  <span className="text-xs font-bold text-[#1a6ef5] tracking-widest uppercase bg-[#eef4ff] px-3 py-1 rounded-full">Active Reservation</span>
+                  <h2 className="text-2xl sm:text-3xl font-black text-[#0d1f3c] tracking-tight mt-2.5 flex items-center gap-2" style={{ fontFamily: "'Exo 2', sans-serif" }}>
+                    {activeQueue.ride.emoji} {activeQueue.ride.name}
+                  </h2>
                 </div>
-
-                {/* Main Progress Section */}
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-8 md:gap-12 mb-8 bg-slate-50/50 p-6 rounded-3xl border border-slate-100">
-                  {/* Circular progress */}
-                  <div className="relative w-32 h-32 shrink-0">
-                    <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
-                      {/* background track */}
-                      <circle cx="60" cy="60" r="50" fill="none" stroke="#e2e8f0" strokeWidth="8" />
-                      {/* animated progress gradient stroke */}
-                      <defs>
-                        <linearGradient id="progGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="#1a6ef5" />
-                          <stop offset="100%" stopColor="#06b6d4" />
-                        </linearGradient>
-                      </defs>
-                      <circle
-                        cx="60"
-                        cy="60"
-                        r="50"
-                        fill="none"
-                        stroke="url(#progGrad)"
-                        strokeWidth="8"
-                        strokeDasharray="314.15"
-                        // Calculate strokeDashoffset dynamically based on remaining position.
-                        // For example: 314.15 - (314.15 * progress) / 100
-                        strokeDashoffset={314.15 - (314.15 * Math.min(100, Math.max(5, (1 - activeQueue.position / 50.0) * 100))) / 100}
-                        strokeLinecap="round"
-                        style={{ transition: "stroke-dashoffset 1s ease" }}
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-3xl font-black text-slate-800 font-poppins">{activeQueue.position}</span>
-                      <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Position</span>
-                    </div>
-                  </div>
-
-                  {/* Side Stats */}
-                  <div className="space-y-4 w-full sm:w-auto">
-                    {[
-                      { icon: Rocket, val: `Batch ${activeQueue.batch_number || 1}`, label: "Your Batch", color: "text-[#1a6ef5]", bg: "bg-blue-50" },
-                      { icon: Users, val: activeQueue.batches_ahead !== undefined ? `${activeQueue.batches_ahead} Ahead` : `${activeQueue.people_ahead || (activeQueue.position - 1)} Ahead`, label: activeQueue.batches_ahead !== undefined ? "Batches Ahead" : "People Ahead", color: "text-cyan-500", bg: "bg-cyan-50" },
-                      { icon: Clock, val: `${activeQueue.estimated_wait || activeQueue.ai_prediction || 0} Min`, label: "Est. Wait", color: "text-amber-500", bg: "bg-amber-50" },
-                      {
-                        icon: Zap,
-                        val: activeQueue.boarding_time ? new Date(activeQueue.boarding_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Boarding Now",
-                        label: "Boarding Time",
-                        color: "text-emerald-500",
-                        bg: "bg-emerald-50"
-                      }
-                    ].map((stat, i) => (
-                      <div key={i} className="flex items-center gap-4">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${stat.bg}`}>
-                          <stat.icon className={`w-5 h-5 ${stat.color}`} />
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-400 font-semibold">{stat.label}</p>
-                          <p className="text-base font-black text-slate-700 font-poppins leading-tight mt-0.5">{stat.val}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Queue Progress Bar */}
-                <div className="mb-6">
-                  <div className="flex justify-between text-xs font-bold text-slate-500 mb-2">
-                    <span>Your Batch: {activeQueue.batch_number || 1}</span>
-                    <span>{activeQueue.batches_ahead !== undefined ? `${activeQueue.batches_ahead} Batches Ahead` : `${activeQueue.position} Pos`}</span>
-                  </div>
-                  <div className="h-2.5 rounded-full bg-slate-100 overflow-hidden">
-                    <div
-                      className="h-full rounded-full transition-all duration-1000"
-                      style={{
-                        width: `${Math.min(100, Math.max(5, (1 - (activeQueue.batches_ahead || 0) / 10.0) * 100))}%`,
-                        background: (activeQueue.estimated_wait || 0) < 15
-                          ? "linear-gradient(90deg, #10b981, #34d399)" // Short -> Green
-                          : (activeQueue.estimated_wait || 0) < 30
-                            ? "linear-gradient(90deg, #f59e0b, #fbbf24)" // Medium -> Amber
-                            : "linear-gradient(90deg, #ef4444, #f87171)" // Long -> Red
-                      }}
-                    />
-                  </div>
-                </div>
-
-                {/* Live Backend Batch Info Strip */}
-                <div className="p-3.5 bg-cyan-50/40 rounded-2xl border border-cyan-100 flex items-center gap-2.5 shadow-[0_4px_16px_rgba(6,182,212,0.04)] mb-6">
-                  <Sparkles className="w-5 h-5 text-cyan-500 shrink-0 animate-pulse" />
-                  <p className="text-xs text-cyan-800 font-medium">
-                    Your Batch: <strong className="font-extrabold">{activeQueue.batch_number || 1}</strong> · <strong className="font-extrabold">{activeQueue.batches_ahead !== undefined ? `${activeQueue.batches_ahead} Batches Ahead` : ''}</strong> · Est. Wait: <strong className="font-extrabold">{activeQueue.estimated_wait || 0} Minutes</strong>
-                  </p>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                  <button
-                    onClick={() => setIsQrOpen(true)}
-                    className="w-full py-3.5 rounded-2xl font-bold text-white shadow-lg shadow-cyan-200 transition-all hover:scale-[1.01] flex items-center justify-center gap-2"
-                    style={{ background: "linear-gradient(135deg, #06b6d4, #0891b2)" }}
-                  >
-                    <QrCode className="w-4 h-4" /> View QR Code
-                  </button>
-                  <button
-                    onClick={handleLeaveQueue}
-                    disabled={loadingAction}
-                    className="w-full py-3.5 rounded-2xl font-bold text-rose-600 bg-rose-50/50 border border-rose-200 transition-all hover:bg-rose-50 hover:border-rose-300 disabled:opacity-40"
-                  >
-                    Leave Queue
-                  </button>
-                </div>
-
-                {/* Live Ticker */}
-                <div className="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full shrink-0 animate-ping" />
-                    <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full shrink-0 absolute" />
-                    <p className="text-[11px] font-bold text-slate-500 tracking-wider uppercase shrink-0">Live Updates:</p>
-                    <p className="text-xs text-slate-600 font-semibold truncate animate-[fadeIn_0.3s_ease]">{tickerMessages[tickerIndex]}</p>
-                  </div>
+                <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-gradient-to-r from-[#1a6ef5] to-[#0052cc] text-white shadow-md w-fit">
+                  <span className="font-mono text-xs font-semibold">#</span>
+                  <span className="font-poppins font-black text-sm tracking-wide">{activeQueue.token}</span>
                 </div>
               </div>
-            ) : (
-              /* SCREEN 2: NO ACTIVE QUEUE VIEW */
-              <div className="space-y-8">
-                {/* Empty State Hero */}
-                <div className="text-center p-8 sm:p-12 rounded-3xl bg-white/70 backdrop-blur-xl border border-slate-100 shadow-xl flex flex-col items-center">
-                  <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center shadow-inner relative animate-[float_3s_ease-in-out_infinite] mb-6">
-                    <Clock className="w-10 h-10 text-blue-500" />
-                    <style>{`
+
+              {/* Main Progress Section */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-8 md:gap-12 mb-8 bg-slate-50/50 p-6 rounded-3xl border border-slate-100">
+                {/* Circular progress */}
+                <div className="relative w-32 h-32 shrink-0">
+                  <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
+                    {/* background track */}
+                    <circle cx="60" cy="60" r="50" fill="none" stroke="#e2e8f0" strokeWidth="8" />
+                    {/* animated progress gradient stroke */}
+                    <defs>
+                      <linearGradient id="progGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#1a6ef5" />
+                        <stop offset="100%" stopColor="#06b6d4" />
+                      </linearGradient>
+                    </defs>
+                    <circle
+                      cx="60"
+                      cy="60"
+                      r="50"
+                      fill="none"
+                      stroke="url(#progGrad)"
+                      strokeWidth="8"
+                      strokeDasharray="314.15"
+                      // Calculate strokeDashoffset dynamically based on remaining position.
+                      // For example: 314.15 - (314.15 * progress) / 100
+                      strokeDashoffset={314.15 - (314.15 * Math.min(100, Math.max(5, (1 - activeQueue.position / 50.0) * 100))) / 100}
+                      strokeLinecap="round"
+                      style={{ transition: "stroke-dashoffset 1s ease" }}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-3xl font-black text-slate-800 font-poppins">{activeQueue.position}</span>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Position</span>
+                  </div>
+                </div>
+
+                {/* Side Stats */}
+                <div className="space-y-4 w-full sm:w-auto">
+                  {[
+                    { icon: Rocket, val: `Batch ${activeQueue.batch_number || 1}`, label: "Your Batch", color: "text-[#1a6ef5]", bg: "bg-blue-50" },
+                    { icon: Users, val: activeQueue.batches_ahead !== undefined ? `${activeQueue.batches_ahead} Ahead` : `${activeQueue.people_ahead || (activeQueue.position - 1)} Ahead`, label: activeQueue.batches_ahead !== undefined ? "Batches Ahead" : "People Ahead", color: "text-cyan-500", bg: "bg-cyan-50" },
+                    { icon: Clock, val: `${activeQueue.estimated_wait || activeQueue.ai_prediction || 0} Min`, label: "Est. Wait", color: "text-amber-500", bg: "bg-amber-50" },
+                    {
+                      icon: Zap,
+                      val: activeQueue.boarding_time ? new Date(activeQueue.boarding_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Boarding Now",
+                      label: "Boarding Time",
+                      color: "text-emerald-500",
+                      bg: "bg-emerald-50"
+                    }
+                  ].map((stat, i) => (
+                    <div key={i} className="flex items-center gap-4">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${stat.bg}`}>
+                        <stat.icon className={`w-5 h-5 ${stat.color}`} />
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-400 font-semibold">{stat.label}</p>
+                        <p className="text-base font-black text-slate-700 font-poppins leading-tight mt-0.5">{stat.val}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Queue Progress Bar */}
+              <div className="mb-6">
+                <div className="flex justify-between text-xs font-bold text-slate-500 mb-2">
+                  <span>Your Batch: {activeQueue.batch_number || 1}</span>
+                  <span>{activeQueue.batches_ahead !== undefined ? `${activeQueue.batches_ahead} Batches Ahead` : `${activeQueue.position} Pos`}</span>
+                </div>
+                <div className="h-2.5 rounded-full bg-slate-100 overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-1000"
+                    style={{
+                      width: `${Math.min(100, Math.max(5, (1 - (activeQueue.batches_ahead || 0) / 10.0) * 100))}%`,
+                      background: (activeQueue.estimated_wait || 0) < 15
+                        ? "linear-gradient(90deg, #10b981, #34d399)" // Short -> Green
+                        : (activeQueue.estimated_wait || 0) < 30
+                          ? "linear-gradient(90deg, #f59e0b, #fbbf24)" // Medium -> Amber
+                          : "linear-gradient(90deg, #ef4444, #f87171)" // Long -> Red
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Live Backend Batch Info Strip */}
+              <div className="p-3.5 bg-cyan-50/40 rounded-2xl border border-cyan-100 flex items-center gap-2.5 shadow-[0_4px_16px_rgba(6,182,212,0.04)] mb-6">
+                <Sparkles className="w-5 h-5 text-cyan-500 shrink-0 animate-pulse" />
+                <p className="text-xs text-cyan-800 font-medium">
+                  Your Batch: <strong className="font-extrabold">{activeQueue.batch_number || 1}</strong> · <strong className="font-extrabold">{activeQueue.batches_ahead !== undefined ? `${activeQueue.batches_ahead} Batches Ahead` : ''}</strong> · Est. Wait: <strong className="font-extrabold">{activeQueue.estimated_wait || 0} Minutes</strong>
+                </p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <button
+                  onClick={() => setIsQrOpen(true)}
+                  className="w-full py-3.5 rounded-2xl font-bold text-white shadow-lg shadow-cyan-200 transition-all hover:scale-[1.01] flex items-center justify-center gap-2"
+                  style={{ background: "linear-gradient(135deg, #06b6d4, #0891b2)" }}
+                >
+                  <QrCode className="w-4 h-4" /> View QR Code
+                </button>
+                <button
+                  onClick={handleLeaveQueue}
+                  disabled={loadingAction}
+                  className="w-full py-3.5 rounded-2xl font-bold text-rose-600 bg-rose-50/50 border border-rose-200 transition-all hover:bg-rose-50 hover:border-rose-300 disabled:opacity-40"
+                >
+                  Leave Queue
+                </button>
+              </div>
+
+              {/* Live Ticker */}
+              <div className="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full shrink-0 animate-ping" />
+                  <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full shrink-0 absolute" />
+                  <p className="text-[11px] font-bold text-slate-500 tracking-wider uppercase shrink-0">Live Updates:</p>
+                  <p className="text-xs text-slate-600 font-semibold truncate animate-[fadeIn_0.3s_ease]">{tickerMessages[tickerIndex]}</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* SCREEN 2: NO ACTIVE QUEUE VIEW */
+            <div className="space-y-8">
+              {/* Empty State Hero */}
+              <div className="text-center p-8 sm:p-12 rounded-3xl bg-white/70 backdrop-blur-xl border border-slate-100 shadow-xl flex flex-col items-center">
+                <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center shadow-inner relative animate-[float_3s_ease-in-out_infinite] mb-6">
+                  <Clock className="w-10 h-10 text-blue-500" />
+                  <style>{`
                       @keyframes float {
                         0% { transform: translateY(0px); }
                         50% { transform: translateY(-12px); }
                         100% { transform: translateY(0px); }
                       }
                     `}</style>
-                  </div>
-                  <h3 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight font-poppins">No Active Queue</h3>
-                  <p className="text-sm text-slate-500 mt-2 max-w-sm leading-relaxed">
-                    You aren't waiting for any ride. Browse attractions below or search for your favorite ride to get a virtual queue ticket.
-                  </p>
-                  <button
-                    onClick={() => setTab("join")}
-                    className="mt-6 px-8 py-3.5 rounded-full font-bold text-white shadow-lg shadow-blue-500/25 transition-all hover:scale-[1.02] flex items-center gap-2 cursor-pointer"
-                    style={{ background: "linear-gradient(135deg, #1a6ef5, #0052cc)" }}
-                  >
-                    <Rocket className="w-4 h-4" /> Browse Rides & Join Queue
-                  </button>
                 </div>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight font-poppins">No Active Queue</h3>
+                <p className="text-sm text-slate-500 mt-2 max-w-sm leading-relaxed">
+                  You aren't waiting for any ride. Browse attractions below or search for your favorite ride to get a virtual queue ticket.
+                </p>
+                <button
+                  onClick={() => setTab("join")}
+                  className="mt-6 px-8 py-3.5 rounded-full font-bold text-white shadow-lg shadow-blue-500/25 transition-all hover:scale-[1.02] flex items-center gap-2 cursor-pointer"
+                  style={{ background: "linear-gradient(135deg, #1a6ef5, #0052cc)" }}
+                >
+                  <Rocket className="w-4 h-4" /> Browse Rides & Join Queue
+                </button>
+              </div>
 
-                {/* Popular Rides List */}
-                <div>
-                  <h3 className="text-lg font-black text-[#0d1f3c] tracking-tight mb-4 flex items-center gap-2" style={{ fontFamily: "'Exo 2', sans-serif" }}>
-                    <span>🔥</span> Popular Right Now
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {rides.slice(0, 4).map((ride) => (
-                      <div
-                        key={ride.id}
-                        className="p-4 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-between gap-4 transition-all duration-200 hover:translate-x-1 hover:border-blue-200 hover:shadow-[0_4px_16px_rgba(26,110,245,0.08)]"
-                      >
-                        <div className="flex items-center gap-3.5">
-                          <span className="text-3xl shrink-0">{ride.emoji}</span>
-                          <div>
-                            <p className="font-extrabold text-sm text-[#0d1f3c] leading-snug">{ride.name}</p>
-                            <p className="text-[11px] text-slate-400 font-semibold mt-0.5">
-                              {ride.current_wait_time} Min wait · {ride.category}
-                            </p>
-                          </div>
+              {/* Popular Rides List */}
+              <div>
+                <h3 className="text-lg font-black text-[#0d1f3c] tracking-tight mb-4 flex items-center gap-2" style={{ fontFamily: "'Exo 2', sans-serif" }}>
+                  <span>🔥</span> Popular Right Now
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {rides.slice(0, 4).map((ride) => (
+                    <div
+                      key={ride.id}
+                      className="p-4 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-between gap-4 transition-all duration-200 hover:translate-x-1 hover:border-blue-200 hover:shadow-[0_4px_16px_rgba(26,110,245,0.08)]"
+                    >
+                      <div className="flex items-center gap-3.5">
+                        <span className="text-3xl shrink-0">{ride.emoji}</span>
+                        <div>
+                          <p className="font-extrabold text-sm text-[#0d1f3c] leading-snug">{ride.name}</p>
+                          <p className="text-[11px] text-slate-400 font-semibold mt-0.5">
+                            {ride.current_wait_time} Min wait · {ride.category}
+                          </p>
                         </div>
-                        <button
-                          onClick={() => {
-                            setSelectedRide(ride);
-                            setTab("join");
-                          }}
-                          className="px-3 py-1.5 rounded-xl text-xs font-bold text-[#1a6ef5] bg-[#eef4ff] hover:bg-blue-100 transition-colors shrink-0 cursor-pointer"
-                        >
-                          + Join
-                        </button>
                       </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Recent Queue Activity */}
-                <div>
-                  <h3 className="text-lg font-black text-[#0d1f3c] tracking-tight mb-4" style={{ fontFamily: "'Exo 2', sans-serif" }}>
-                    📅 Recent Queue Activity
-                  </h3>
-                  <div className="space-y-3">
-                    {historyList.slice(0, 2).map((item) => (
-                      <div
-                        key={item.id}
-                        className="p-4 rounded-2xl bg-white border border-slate-100 flex items-center justify-between gap-4 shadow-sm"
+                      <button
+                        onClick={() => {
+                          setSelectedRide(ride);
+                          setTab("join");
+                        }}
+                        className="px-3 py-1.5 rounded-xl text-xs font-bold text-[#1a6ef5] bg-[#eef4ff] hover:bg-blue-100 transition-colors shrink-0 cursor-pointer"
                       >
-                        <div className="flex items-center gap-3">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${item.status === 'completed' ? 'bg-emerald-50' : 'bg-rose-50'}`}>
-                            {item.status === 'completed' ? (
-                              <Check className="w-4 h-4 text-emerald-600" />
-                            ) : (
-                              <X className="w-4 h-4 text-rose-600" />
-                            )}
-                          </div>
-                          <div>
-                            <p className="font-extrabold text-xs text-[#0d1f3c] leading-snug">{item.ride_name}</p>
-                            <p className="text-[10px] text-slate-400 mt-0.5">
-                              {new Date(item.joined_at).toLocaleDateString([], { month: 'short', day: 'numeric' })} · Token: {item.token}
-                            </p>
-                          </div>
-                        </div>
-                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${item.status === 'completed' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
-                          {item.status}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+                        + Join
+                      </button>
+                    </div>
+                  ))}
                 </div>
               </div>
-            )}
+
+              {/* Recent Queue Activity */}
+              <div>
+                <h3 className="text-lg font-black text-[#0d1f3c] tracking-tight mb-4" style={{ fontFamily: "'Exo 2', sans-serif" }}>
+                  📅 Recent Queue Activity
+                </h3>
+                <div className="space-y-3">
+                  {historyList.slice(0, 2).map((item) => (
+                    <div
+                      key={item.id}
+                      className="p-4 rounded-2xl bg-white border border-slate-100 flex items-center justify-between gap-4 shadow-sm"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${item.status === 'completed' ? 'bg-emerald-50' : 'bg-rose-50'}`}>
+                          {item.status === 'completed' ? (
+                            <Check className="w-4 h-4 text-emerald-600" />
+                          ) : (
+                            <X className="w-4 h-4 text-rose-600" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-extrabold text-xs text-[#0d1f3c] leading-snug">{item.ride_name}</p>
+                          <p className="text-[10px] text-slate-400 mt-0.5">
+                            {new Date(item.joined_at).toLocaleDateString([], { month: 'short', day: 'numeric' })} · Token: {item.token}
+                          </p>
+                        </div>
+                      </div>
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${item.status === 'completed' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
+                        {item.status}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -1037,7 +1052,7 @@ export default function VirtualQueuePage({ selectedRideProp, onClearSelectedRide
                         )}
                         {ride.status !== "closed" && ride.status !== "maintenance" && ride.status_code === "riding" && (
                           <span className="absolute top-3.5 right-3.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wide bg-cyan-600 text-white shadow-md">
-                            Ride in Progress ({Math.floor((ride.phase_remaining_seconds || 0)/60)}m {(ride.phase_remaining_seconds || 0)%60}s)
+                            Ride in Progress ({Math.floor((ride.phase_remaining_seconds || 0) / 60)}m {(ride.phase_remaining_seconds || 0) % 60}s)
                           </span>
                         )}
                         {ride.status !== "closed" && ride.status !== "maintenance" && ride.status_code === "batch_full" && (
@@ -1082,11 +1097,10 @@ export default function VirtualQueuePage({ selectedRideProp, onClearSelectedRide
                             <button
                               onClick={() => setSelectedRide(ride)}
                               disabled={isClosed}
-                              className={`w-full mt-5 py-2.5 rounded-2xl text-xs font-black transition-all shadow-md ${
-                                isClosed
+                              className={`w-full mt-5 py-2.5 rounded-2xl text-xs font-black transition-all shadow-md ${isClosed
                                   ? "bg-slate-200 text-slate-500 cursor-not-allowed border border-slate-300 shadow-none opacity-80"
                                   : "text-white shadow-blue-500/20 hover:shadow-blue-500/30 cursor-pointer"
-                              }`}
+                                }`}
                               style={{
                                 background: isClosed ? "#e2e8f0" : "linear-gradient(135deg, #1a6ef5, #0052cc)"
                               }}
@@ -1094,10 +1108,10 @@ export default function VirtualQueuePage({ selectedRideProp, onClearSelectedRide
                               {ride.status === "closed"
                                 ? "Closed 🚫"
                                 : ride.status === "maintenance"
-                                ? "Under Maintenance 🛠️"
-                                : isClosed
-                                ? "Queue Paused ⏸️"
-                                : "Join Queue Now"}
+                                  ? "Under Maintenance 🛠️"
+                                  : isClosed
+                                    ? "Queue Paused ⏸️"
+                                    : "Join Queue Now"}
                             </button>
                           );
                         })()}
@@ -1126,9 +1140,14 @@ export default function VirtualQueuePage({ selectedRideProp, onClearSelectedRide
               <div className="p-6 rounded-3xl bg-white/70 backdrop-blur-xl border border-slate-100 shadow-xl mb-6 space-y-4">
                 {[
                   { label: "Category", val: selectedRide.category },
-                  { label: "Current Wait", val: `${selectedRide.current_wait_time} Min`, class: "text-amber-500 font-extrabold" },
+                  { label: "Park Zone", val: selectedRide.zone || (
+                    (selectedRide.category || '').toLowerCase() === 'thrill' ? 'Zone A' :
+                    (selectedRide.category || '').toLowerCase() === 'water' ? 'Zone B' :
+                    (selectedRide.category || '').toLowerCase() === 'kids' ? 'Zone D' : 'Zone C'
+                  ) },
+                  { label: "Current Wait", val: `${selectedRide.current_wait_time ?? selectedRide.wait ?? 0} Min`, class: "text-amber-500 font-extrabold" },
                   { label: "Ride Capacity", val: `${selectedRide.capacity} People/Cycle` },
-                  { label: "Min. Height Limit", val: selectedRide.min_height_cm ? `${selectedRide.min_height_cm} cm` : "No height limit" }
+                  { label: "Min. Height Limit", val: selectedRide.min_height_cm ? `${selectedRide.min_height_cm} cm` : (selectedRide.height || "No height limit") }
                 ].map((row, i) => (
                   <div key={i} className="flex justify-between items-center text-sm py-2.5 border-b border-slate-100/50 last:border-b-0">
                     <span className="text-slate-500 font-semibold">{row.label}</span>

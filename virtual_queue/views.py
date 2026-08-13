@@ -216,7 +216,6 @@ def complete_queue(request):
     
     # Calculate XP
     xp_earned = calculate_xp(ride, user)
-    queue_entry.xp_earned = xp_earned
     queue_entry.save()
     
     # Update stats
@@ -304,7 +303,7 @@ def admin_live_view(request):
     data = []
     
     for r in rides:
-        queues = VirtualQueue.objects.filter(ride=r, status='waiting').order_by('position')
+        queues = VirtualQueue.objects.filter(ride=r, status__in=['waiting', 'boarding']).order_by('position')
         positions_list = []
         for q in queues:
             waited_sec = (timezone.now() - q.joined_at).total_seconds()
@@ -313,6 +312,8 @@ def admin_live_view(request):
                 "user_name": q.user.username,
                 "token": q.token,
                 "position": q.position,
+                "batch_number": q.batch_number,
+                "status": q.status,
                 "waited_min": waited_min
             })
             
@@ -320,6 +321,7 @@ def admin_live_view(request):
             "ride_id": r.id,
             "ride_name": r.name,
             "ride_emoji": r.emoji,
+            "current_batch_number": r.current_batch_number,
             "active_count": len(positions_list),
             "positions": positions_list
         })

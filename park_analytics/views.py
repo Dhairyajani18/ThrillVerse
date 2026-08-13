@@ -1,20 +1,21 @@
 import os
 import pickle
 from django.http import JsonResponse
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from virtual_queue.permissions import IsAdminOrStaff
 
 crowd_model = None
 weather_encoder = None
 wait_time_model = None
-recommendation_model = None
 
 # પ્રોજેક્ટનું રૂટ ફોલ્ડર (sem-4_p1)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def load_models():
-    global crowd_model, weather_encoder, wait_time_model, recommendation_model
+    global crowd_model, weather_encoder, wait_time_model
     
    
     selected_dir = os.path.join(BASE_DIR, 'ml_service\\models')
@@ -31,10 +32,6 @@ def load_models():
         # 2. Wait Time Model લોડ કરો
         with open(os.path.join(selected_dir, 'wait_time_model.pkl'), 'rb') as f:
             wait_time_model = pickle.load(f)
-
-        # 3. Recommendation Model લોડ કરો (તમારા સાઇડબારમાં આ જ નામ છે)
-        with open(os.path.join(selected_dir, 'recommendation_model.pkl'), 'rb') as f:
-            recommendation_model = pickle.load(f)
             
         print("SUCCESS: ALL ML MODELS LOADED PERFECTLY FROM ML_SERVICE\\MODELS!")
     except Exception as e:
@@ -43,6 +40,7 @@ def load_models():
 # 1. ENDPOINT: /predict-crowd
 # =====================================================================
 @api_view(['POST'])
+@permission_classes([IsAdminOrStaff])
 def predict_crowd(request):
     try:
         hour = request.data.get('hour')
@@ -77,6 +75,7 @@ def predict_crowd(request):
 # 2. ENDPOINT: /predict-wait-time
 # =====================================================================
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def predict_wait_time(request):
     try:
         ride_id = int(request.data.get('ride_id'))
@@ -98,27 +97,4 @@ def predict_wait_time(request):
         }, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"status": "crash", "error_details": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-# =====================================================================
-# 3. ENDPOINT: /recommend-rides
-# =====================================================================
-@api_view(['POST'])
-def recommend_rides(request):
-    try:
-        user_age = int(request.data.get('user_age'))
-        thrill_preference = int(request.data.get('thrill_preference'))
-        
-        if recommendation_model is None:
-            return Response({"status": "error", "message": "Recommendation મોડેલ લોડ નથી થયું."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
-        import pandas as pd
-        features = pd.DataFrame([[user_age, thrill_preference]], 
-                                columns=['user_age', 'thrill_preference'])
-        prediction = recommendation_model.predict(features)[0]
-        
-        return Response({
-            "status": "success",
-            "recommended_ride": prediction
-        }, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response({"status": "crash", "error_details": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+

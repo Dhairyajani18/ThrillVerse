@@ -471,7 +471,7 @@ export default function UserProfilePage({ setPage, setSelectedQueueRide }: UserP
                   </div>
                   <h4 className="text-lg font-black text-slate-800 font-poppins">{activeQueue.ride?.name || activeQueue.ride_name || "Nitro Roller Coaster"}</h4>
                   <p className="text-xs text-slate-500 font-medium mt-1">
-                    Est. Wait Time: <span className="font-bold text-slate-700">{activeQueue.estimated_wait} mins</span> · Joined: <span className="font-bold text-slate-700">{activeQueue.joined_at ? new Date(activeQueue.joined_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Just now"}</span>
+                    Est. Wait Time: <span className="font-bold text-slate-700">{activeQueue.estimated_wait} mins</span> · Boarding Time: <span className="font-bold text-emerald-600">{activeQueue.boarding_time ? new Date(activeQueue.boarding_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : (activeQueue.estimated_wait ? new Date(Date.now() + activeQueue.estimated_wait * 60000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Boarding Now")}</span>
                   </p>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2 shrink-0 w-full sm:w-auto">
@@ -687,8 +687,18 @@ export default function UserProfilePage({ setPage, setSelectedQueueRide }: UserP
                 <span className="font-black text-slate-800">{phoneNumber}</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-slate-50">
-                <span className="text-slate-400 font-bold">Height (cm)</span>
-                <span className="font-black text-slate-800">{heightVal}</span>
+                <span className="text-slate-400 font-bold">Height</span>
+                <span className="font-black text-slate-800">{userProfile?.height ? `${userProfile.height} cm` : heightVal || "Not Specified"}</span>
+              </div>
+              <div className="flex justify-between py-1.5 border-b border-slate-50">
+                <span className="text-slate-400 font-bold">Age</span>
+                <span className="font-black text-slate-800">{userProfile?.age ? `${userProfile.age} Yrs` : "Not Specified"}</span>
+              </div>
+              <div className="flex justify-between py-1.5 border-b border-slate-50">
+                <span className="text-slate-400 font-bold">Preferred Thrill</span>
+                <span className="font-black text-slate-800">
+                  {userProfile?.preferred_thrill === 3 ? "High Thrill 🚀" : userProfile?.preferred_thrill === 1 ? "Low Thrill 🎠" : "Medium Thrill 🎡"}
+                </span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-slate-50">
                 <span className="text-slate-400 font-bold">Member Since</span>
@@ -1041,6 +1051,11 @@ export default function UserProfilePage({ setPage, setSelectedQueueRide }: UserP
                 src={activeQrModalTicket.qr_code_base64 || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(activeQrModalTicket.ticket_id || "TV-PASS")}`}
                 className="w-full h-full object-contain rounded-2xl"
                 alt="Scannable Ticket QR Code"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  target.onerror = null;
+                  target.src = `https://quickchart.io/qr?text=${encodeURIComponent(activeQrModalTicket.ticket_id || "TV-PASS")}&size=250`;
+                }}
               />
             </div>
 

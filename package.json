@@ -2,6 +2,8 @@
   "name": "thrillverse",
   "private": true,
   "scripts": {
+    "dev": "npm run dev:frontend",
+    "start": "npm run dev:frontend",
     "dev:frontend": "npm run dev --prefix fronted/fronted",
     "dev:backend": "python manage.py runserver",
     "dev:email": "node email_service/server.js",

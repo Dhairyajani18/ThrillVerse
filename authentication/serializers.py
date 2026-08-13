@@ -79,6 +79,10 @@ class RegisterSerializer(serializers.Serializer):
         if User.objects.filter(email=data['email']).exists():
             raise serializers.ValidationError({"email": "Email address already registered."})
         
+        # Age positive integer validation
+        if data.get('age') is not None and data['age'] <= 0:
+            raise serializers.ValidationError({"age": "Age must be a valid positive integer greater than 0."})
+
         # 10 digit phone number validation
         phone = str(data.get('phone_number', '')).strip()
         clean_phone = ''.join(filter(str.isdigit, phone))

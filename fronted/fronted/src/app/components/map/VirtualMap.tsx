@@ -329,12 +329,12 @@ export default function VirtualMap() {
                         <span className="font-extrabold text-emerald-400">{selectedLoc.waitTime !== undefined ? `${selectedLoc.waitTime} mins` : 'No Wait'}</span>
                       </div>
                       <div>
-                        <span className="text-[9px] uppercase font-black text-slate-500 block">Ride Duration</span>
-                        <span className="font-bold text-slate-300">{selectedLoc.duration || 'N/A'}</span>
+                        <span className="text-[9px] uppercase font-black text-slate-500 block">Height Req.</span>
+                        <span className="font-bold text-slate-300">{selectedLoc.heightReq ? `${selectedLoc.heightReq} cm` : 'No restriction'}</span>
                       </div>
                       <div>
-                        <span className="text-[9px] uppercase font-black text-slate-500 block">Capacity</span>
-                        <span className="font-bold text-slate-300">{selectedLoc.capacity || 'Standard'}</span>
+                        <span className="text-[9px] uppercase font-black text-slate-500 block">Park Zone</span>
+                        <span className="font-bold text-slate-300">{selectedLoc.zoneName || 'Main Zone'}</span>
                       </div>
                     </div>
                   )}

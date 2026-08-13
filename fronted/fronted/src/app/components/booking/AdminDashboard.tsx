@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { 
-  TrendingUp, Users, BarChart2, DollarSign, Calendar, Clock, 
-  CheckCircle, AlertCircle, RefreshCw, ChevronLeft, Download, 
-  Printer, ArrowLeft, QrCode, Shield, SlidersHorizontal, Edit, 
-  Menu, X, Sparkles, AlertTriangle, Play, Pause, Plus, Trash2, 
+import {
+  TrendingUp, Users, BarChart2, DollarSign, Calendar, Clock,
+  CheckCircle, AlertCircle, RefreshCw, ChevronLeft, Download,
+  Printer, ArrowLeft, QrCode, Shield, SlidersHorizontal, Edit,
+  Menu, X, Sparkles, AlertTriangle, Play, Pause, Plus, Trash2,
   Percent, Send, Settings, Mail, LogOut, Search, ChevronRight, Eye,
   Info, FileText, Check, Layers, Image, HelpCircle, User, Compass, Coffee
 } from 'lucide-react';
-import { 
-  ResponsiveContainer, AreaChart, Area, BarChart, Bar, 
+import {
+  ResponsiveContainer, AreaChart, Area, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell, Legend
 } from 'recharts';
 import { toast } from 'sonner';
@@ -51,11 +51,11 @@ interface AdminDashboardProps {
 
 export default function AdminDashboard({ token, onClose }: AdminDashboardProps) {
   const { userProfile, login, logout, isAuthenticated } = useAuth();
-  
+
   // Navigation tabs
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'rides' | 'restaurants' | 'tickets' | 'offers' | 'prediction' | 'analytics' | 'reports' | 'email' | 'settings'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'rides' | 'restaurants' | 'tickets' | 'offers' | 'prediction' | 'analytics' | 'reports' | 'email'>('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  
+
   // Login form state
   const [loginEmail, setLoginEmail] = useState('admin@thrillverse.com');
   const [loginPassword, setLoginPassword] = useState('admin@123');
@@ -82,7 +82,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
     name: '', adult_price: 999, child_price: 699, senior_price: 799,
     banner_image: '', description: '', discount_percentage: 10, promo_code: '',
     start_date: new Date().toISOString().split('T')[0],
-    expiry_date: new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0],
+    expiry_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     applicable_ticket: 'All', terms_conditions: 'Terms apply.'
   });
 
@@ -122,12 +122,12 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
     setLoading(true);
     const activeToken = token || localStorage.getItem('token') || '';
     const headers = { 'Authorization': `Bearer ${activeToken}` };
-    
+
     Promise.all([
       fetch('http://127.0.0.1:8000/queue/admin/payment-analytics/', { headers }).then(res => res.json()),
       fetch('http://127.0.0.1:8000/queue/admin/transactions/', { headers }).then(res => res.json()),
-      fetch('http://127.0.0.1:8000/queue/rides/').then(res => res.json()),
-      fetch('http://127.0.0.1:8000/queue/restaurants/').then(res => res.json()),
+      fetch('http://127.0.0.1:8000/queue/rides/', { headers }).then(res => res.json()),
+      fetch('http://127.0.0.1:8000/queue/restaurants/', { headers }).then(res => res.json()),
       fetch('http://127.0.0.1:8000/queue/admin/ticket-types/', { headers }).then(res => res.json()),
       fetch('http://127.0.0.1:8000/queue/admin/system-config/', { headers }).then(res => res.json()),
       fetch('http://127.0.0.1:8000/queue/offers/', { headers }).then(res => res.json())
@@ -137,28 +137,28 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
           ...r,
           img: r.id === 1 ? nitroImg :
             r.id === 2 ? screamImg :
-            r.id === 3 ? spacexImg :
-            r.id === 4 ? dropImg :
-            r.id === 5 ? dinoImg :
-            r.id === 6 ? splashAhoyImg :
-            r.id === 7 ? goldRushImg :
-            r.id === 8 ? alibabaImg :
-            r.id === 9 ? bhangarhImg :
-            r.id === 10 ? chaiSpinImg :
-            r.id === 11 ? wrathImg :
-            r.id === 12 ? carouselImg :
-            r.id === 13 ? chhotaBheemImg :
-            r.id === 14 ? elephantRideImg :
-            r.id === 15 ? miniFallImg :
-            r.id === 16 ? cinema360Img : (r.img || nitroImg)
+              r.id === 3 ? spacexImg :
+                r.id === 4 ? dropImg :
+                  r.id === 5 ? dinoImg :
+                    r.id === 6 ? splashAhoyImg :
+                      r.id === 7 ? goldRushImg :
+                        r.id === 8 ? alibabaImg :
+                          r.id === 9 ? bhangarhImg :
+                            r.id === 10 ? chaiSpinImg :
+                              r.id === 11 ? wrathImg :
+                                r.id === 12 ? carouselImg :
+                                  r.id === 13 ? chhotaBheemImg :
+                                    r.id === 14 ? elephantRideImg :
+                                      r.id === 15 ? miniFallImg :
+                                        r.id === 16 ? cinema360Img : (r.img || nitroImg)
         }));
 
         const mappedRestaurants = (Array.isArray(restList) ? restList : []).map((r: any) => ({
           ...r,
           img: r.id === 1 ? spiceArenaImg :
             r.id === 2 ? burgerBayImg :
-            r.id === 3 ? "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=400&fit=crop&auto=format" :
-            r.id === 4 ? splashCafeImg : (r.img || spiceArenaImg)
+              r.id === 3 ? "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=400&fit=crop&auto=format" :
+                r.id === 4 ? splashCafeImg : (r.img || spiceArenaImg)
         }));
 
         setDashboardData(analytics);
@@ -179,6 +179,43 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
   useEffect(() => {
     if (isAuthenticated && userProfile?.role?.toLowerCase() === 'admin') {
       fetchAllData();
+
+      // Real-time 3-second auto-refresh for active ride queue monitoring
+      const intervalId = setInterval(() => {
+        fetch('http://127.0.0.1:8000/queue/rides/')
+          .then(res => res.json())
+          .then(ridesList => {
+            if (Array.isArray(ridesList)) {
+              setRides(prevRides => {
+                return ridesList.map((r: any) => {
+                  const existing = prevRides.find((p: any) => p.id === r.id);
+                  const img = existing?.img || (
+                    r.id === 1 ? nitroImg :
+                      r.id === 2 ? screamImg :
+                        r.id === 3 ? spacexImg :
+                          r.id === 4 ? dropImg :
+                            r.id === 5 ? dinoImg :
+                              r.id === 6 ? splashAhoyImg :
+                                r.id === 7 ? goldRushImg :
+                                  r.id === 8 ? alibabaImg :
+                                    r.id === 9 ? bhangarhImg :
+                                      r.id === 10 ? chaiSpinImg :
+                                        r.id === 11 ? wrathImg :
+                                          r.id === 12 ? carouselImg :
+                                            r.id === 13 ? chhotaBheemImg :
+                                              r.id === 14 ? elephantRideImg :
+                                                r.id === 15 ? miniFallImg :
+                                                  r.id === 16 ? cinema360Img : (r.img || nitroImg)
+                  );
+                  return { ...r, img };
+                });
+              });
+            }
+          })
+          .catch(err => console.error("Auto-refresh error:", err));
+      }, 3000);
+
+      return () => clearInterval(intervalId);
     }
   }, [token, isAuthenticated, userProfile]);
 
@@ -206,11 +243,13 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
     if (!scanToken.trim()) return;
     setScanLoading(true);
     setScanResult(null);
+    const activeToken = token || localStorage.getItem('token') || '';
 
     fetch('http://127.0.0.1:8000/queue/booking/check-in/', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${activeToken}`
       },
       body: JSON.stringify({ signed_token: scanToken.trim() })
     })
@@ -221,9 +260,9 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
           setScanResult({ text: `❌ Check-in Failed: ${resData.error}`, isError: true });
           toast.error('Ticket Check-in Failed!');
         } else {
-          setScanResult({ 
-            text: `✅ Check-in Success! Booking ${resData.booking_id} verified. Visitors: ${resData.visitor_count}`, 
-            isError: false 
+          setScanResult({
+            text: `✅ Check-in Success! Booking ${resData.booking_id} verified. Visitors: ${resData.visitor_count}`,
+            isError: false
           });
           toast.success('Ticket Checked In successfully!');
           fetchAllData(); // Refresh analytics metrics
@@ -239,7 +278,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
   // Save changes to Ride Details
   const handleSaveRide = () => {
     if (!editingRide) return;
-    const headers = { 
+    const headers = {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     };
@@ -265,7 +304,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
   // Save changes to Restaurant Details
   const handleSaveRestaurant = () => {
     if (!editingRestaurant) return;
-    const headers = { 
+    const headers = {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     };
@@ -291,7 +330,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
   // Save changes to Ticket pricing
   const handleSaveTicket = () => {
     if (!editingTicket) return;
-    const headers = { 
+    const headers = {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     };
@@ -315,7 +354,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
 
   // Update GST Config
   const handleUpdateGST = (newGst: string) => {
-    const headers = { 
+    const headers = {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     };
@@ -338,7 +377,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
       toast.error('Please enter offer title and promo code.');
       return;
     }
-    const headers = { 
+    const headers = {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     };
@@ -356,7 +395,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
             name: '', adult_price: 999, child_price: 699, senior_price: 799,
             banner_image: '', description: '', discount_percentage: 10, promo_code: '',
             start_date: new Date().toISOString().split('T')[0],
-            expiry_date: new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0],
+            expiry_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
             applicable_ticket: 'All', terms_conditions: 'Terms apply.'
           });
           fetchAllData();
@@ -442,7 +481,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
       return;
     }
     setEmailSending(true);
-    const headers = { 
+    const headers = {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     };
@@ -530,21 +569,27 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
   };
 
   // Filter lists based on search
-  const filteredRides = rides.filter(r => 
-    (rideFilter === 'all' || r.category.toLowerCase() === rideFilter.toLowerCase()) &&
-    r.name.toLowerCase().includes(globalSearch.toLowerCase())
+  const filteredRides = rides.filter(r => {
+    const cat = (r.category || '').toLowerCase();
+    const filter = rideFilter.toLowerCase();
+    const matchesCategory = filter === 'all' ||
+      cat === filter ||
+      cat.includes(filter) ||
+      (filter === 'thriller' && (cat.includes('thrill') || cat.includes('thriller')));
+    const matchesSearch = !globalSearch || r.name.toLowerCase().includes(globalSearch.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+  const filteredRestaurants = restaurants.filter(r =>
+    (restaurantFilter === 'all' || ((r.status || 'open').toLowerCase() === restaurantFilter.toLowerCase())) &&
+    ((r.name || '').toLowerCase().includes(globalSearch.toLowerCase()))
   );
 
-  const filteredRestaurants = restaurants.filter(r => 
-    (restaurantFilter === 'all' || r.status.toLowerCase() === restaurantFilter.toLowerCase()) &&
-    r.name.toLowerCase().includes(globalSearch.toLowerCase())
-  );
-
-  const filteredTransactions = transactions.filter(t => 
+  const filteredTransactions = transactions.filter(t =>
     (transactionFilter === 'all' || t.payment_status.toLowerCase() === transactionFilter.toLowerCase()) &&
-    (t.booking_id.toLowerCase().includes(globalSearch.toLowerCase()) || 
-     t.user_name.toLowerCase().includes(globalSearch.toLowerCase()) ||
-     t.offer_name.toLowerCase().includes(globalSearch.toLowerCase()))
+    (t.booking_id.toLowerCase().includes(globalSearch.toLowerCase()) ||
+      t.user_name.toLowerCase().includes(globalSearch.toLowerCase()) ||
+      t.offer_name.toLowerCase().includes(globalSearch.toLowerCase()))
   );
 
   // If not authenticated or not an admin user, render a beautiful ThrillVerse light-themed login panel
@@ -554,7 +599,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
         {/* Soft background glow circles */}
         <div className="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] rounded-full bg-blue-100/50 blur-[120px] pointer-events-none" />
         <div className="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] rounded-full bg-cyan-100/40 blur-[120px] pointer-events-none" />
-        
+
         <div className="w-full max-w-[440px] bg-white border border-slate-200/80 rounded-3xl p-8 shadow-xl shadow-blue-500/5 relative z-10">
           <div className="text-center mb-8">
             <div className="inline-flex w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#1a6ef5] to-[#0052cc] items-center justify-center text-white text-2xl font-extrabold shadow-lg shadow-blue-500/25 mb-4" style={{ fontFamily: "'Exo 2', sans-serif" }}>TV</div>
@@ -625,7 +670,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
 
   return (
     <div className="min-h-screen bg-slate-50/80 text-slate-800 flex overflow-hidden" style={{ fontFamily: "'Inter', sans-serif" }}>
-      
+
       {/* Sidebar Navigation */}
       <aside className={`bg-white border-r border-slate-200/80 transition-all duration-300 flex flex-col shrink-0 ${sidebarOpen ? 'w-64' : 'w-20'}`}>
         {/* Brand header */}
@@ -638,7 +683,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
               </span>
             )}
           </div>
-          <button 
+          <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer hidden md:block"
           >
@@ -657,17 +702,15 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
             { id: 'prediction', label: 'Crowd Prediction', icon: <Sparkles size={18} /> },
             { id: 'analytics', label: 'Deep Analytics', icon: <TrendingUp size={18} /> },
             { id: 'reports', label: 'Reports Hub', icon: <FileText size={18} /> },
-            { id: 'email', label: 'Email Broadcasts', icon: <Mail size={18} /> },
-            { id: 'settings', label: 'System Settings', icon: <Settings size={18} /> }
+            { id: 'email', label: 'Email Broadcasts', icon: <Mail size={18} /> }
           ].map(item => (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id as any)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer ${
-                activeTab === item.id 
-                  ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600 pl-4' 
-                  : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
-              }`}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer ${activeTab === item.id
+                ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600 pl-4'
+                : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                }`}
             >
               <span className={activeTab === item.id ? 'text-blue-600' : 'text-slate-400'}>{item.icon}</span>
               {sidebarOpen && <span className="truncate">{item.label}</span>}
@@ -696,7 +739,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
               </div>
             </button>
           )}
-          <button 
+          <button
             onClick={() => {
               logout();
               notifyAuthSuccess("logout");
@@ -711,11 +754,11 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
 
       {/* Main Container */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        
+
         {/* Sticky Header */}
         <header className="bg-white border-b border-slate-200/80 px-6 py-4 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <button 
+            <button
               onClick={onClose}
               className="p-2 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors border border-slate-200/60 cursor-pointer flex items-center gap-1.5 text-xs font-bold"
             >
@@ -740,7 +783,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
               />
             </div>
 
-            <button 
+            <button
               onClick={fetchAllData}
               className="p-2.5 rounded-xl border border-slate-200/60 hover:bg-slate-50 text-slate-500 hover:text-slate-700 cursor-pointer"
               title="Refresh Console Data"
@@ -783,9 +826,9 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                   {/* KPI Row */}
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     {[
-                      { label: 'Total Revenue', value: `₹${totals.total_revenue?.toLocaleString()}`, icon: <DollarSign size={20} className="text-blue-500" />, desc: 'All channels' },
-                      { label: "Today's Revenue", value: `₹${totals.today_revenue?.toLocaleString()}`, icon: <TrendingUp size={20} className="text-emerald-500" />, desc: 'Real-time booking' },
-                      { label: 'Visitors Inside Park', value: totals.today_visitors, icon: <Users size={20} className="text-cyan-500" />, desc: `Checked in today` },
+                      { label: 'Total Revenue', value: `₹${(totals?.total_revenue ?? 0).toLocaleString()}`, icon: <DollarSign size={20} className="text-blue-500" />, desc: 'All channels' },
+                      { label: "Today's Revenue", value: `₹${(totals?.today_revenue ?? 0).toLocaleString()}`, icon: <TrendingUp size={20} className="text-emerald-500" />, desc: 'Real-time booking' },
+                      { label: 'Visitors Inside Park', value: totals?.today_visitors ?? 0, icon: <Users size={20} className="text-cyan-500" />, desc: `Checked in today` },
                       { label: 'Active Rides', value: `${rides.filter(r => r.status === 'open').length} / ${rides.length}`, icon: <Compass size={20} className="text-purple-500" />, desc: `${rides.filter(r => r.status === 'maintenance').length} in maintenance` },
                       { label: 'Restaurants Open', value: `${restaurants.filter(r => r.status === 'open').length} / ${restaurants.length}`, icon: <Coffee size={20} className="text-amber-500" />, desc: 'Food courts open' },
                       { label: 'Average Queue Time', value: '18 min', icon: <Clock size={20} className="text-red-500" />, desc: 'AI-monitored wait' },
@@ -815,8 +858,8 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                           <AreaChart data={charts.daily_revenue || []} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                             <defs>
                               <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#2563eb" stopOpacity={0.15}/>
-                                <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
+                                <stop offset="5%" stopColor="#2563eb" stopOpacity={0.15} />
+                                <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
                               </linearGradient>
                             </defs>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -897,7 +940,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                       <p className="text-xs text-slate-400 leading-normal mb-5">
                         Simulate checking in customers at the park entry gate by entering their cryptographically signed ticket token.
                       </p>
-                      
+
                       <div className="space-y-4 flex-1">
                         <textarea
                           rows={4}
@@ -906,7 +949,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                           placeholder="Paste cryptographically signed QR code token..."
                           className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-xs font-mono focus:outline-none focus:border-blue-500 resize-none"
                         />
-                        
+
                         <button
                           onClick={handleCheckInScan}
                           disabled={scanLoading}
@@ -917,11 +960,10 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                         </button>
 
                         {scanResult && (
-                          <div className={`p-4 rounded-2xl border text-xs font-medium ${
-                            scanResult.isError 
-                              ? 'bg-rose-50 border-rose-100 text-rose-800' 
-                              : 'bg-emerald-50 border-emerald-100 text-emerald-800'
-                          }`}>
+                          <div className={`p-4 rounded-2xl border text-xs font-medium ${scanResult.isError
+                            ? 'bg-rose-50 border-rose-100 text-rose-800'
+                            : 'bg-emerald-50 border-emerald-100 text-emerald-800'
+                            }`}>
                             {scanResult.text}
                           </div>
                         )}
@@ -941,11 +983,10 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                         <button
                           key={cat}
                           onClick={() => setRideFilter(cat.toLowerCase())}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
-                            (rideFilter === cat.toLowerCase()) 
-                              ? 'bg-slate-900 text-white' 
-                              : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
-                          }`}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${(rideFilter === cat.toLowerCase())
+                            ? 'bg-slate-900 text-white'
+                            : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                            }`}
                         >
                           {cat}
                         </button>
@@ -964,10 +1005,10 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                             <img src={ride.img} alt={ride.name} className="w-full h-full object-cover" />
                             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
                             <span className="absolute top-4 left-4 text-2xl">{ride.emoji}</span>
-                            
+
                             {/* Badges */}
                             <span className="absolute top-4 right-4 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-white/90 text-slate-800">{ride.category}</span>
-                            
+
                             <div className="absolute bottom-4 left-4 right-4">
                               <h3 className="text-base font-black text-white font-poppins">{ride.name}</h3>
                               <p className="text-[11px] text-white/70 font-medium mt-0.5">Duration: {ride.duration} · Capacity: {ride.capacity}</p>
@@ -975,19 +1016,102 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                           </div>
 
                           <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                            <div className="space-y-2">
+                            <div className="space-y-3">
                               <div className="flex items-center justify-between text-xs font-bold">
                                 <span className="text-slate-400">Queue Operational Status</span>
-                                <span className={`px-2 py-0.5 rounded-md text-[10px] uppercase ${
-                                  ride.status === 'open' ? 'bg-emerald-50 text-emerald-600' :
+                                <span className={`px-2 py-0.5 rounded-md text-[10px] uppercase ${ride.status === 'open' ? 'bg-emerald-50 text-emerald-600' :
                                   ride.status === 'maintenance' ? 'bg-amber-50 text-amber-600' : 'bg-slate-100 text-slate-500'
-                                }`}>
+                                  }`}>
                                   {ride.status === 'maintenance' ? '🚧 Maintenance' : ride.status}
                                 </span>
                               </div>
                               <p className="text-xs text-slate-400 font-medium leading-relaxed">
                                 {ride.safety_instructions || 'Safety guidelines and operational protocols configured.'}
                               </p>
+
+                              {/* ACTIVE BATCHES MONITORING SECTION */}
+                              <div className="space-y-2.5 pt-2 border-t border-slate-100">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5 font-poppins">
+                                    <Layers size={14} className="text-blue-600" />
+                                    Active Batches
+                                  </span>
+                                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-50 text-blue-700 border border-blue-100">
+                                    Active Batches: {ride.total_active_batches ?? (ride.active_batches?.length || 0)}
+                                  </span>
+                                </div>
+
+                                {/* Queue summary metrics */}
+                                <div className="grid grid-cols-2 gap-2 bg-slate-50 p-2 rounded-xl text-[11px] font-medium border border-slate-100">
+                                  <div className="flex items-center gap-1 text-slate-600">
+                                    <Users size={12} className="text-slate-400 shrink-0" />
+                                    <span className="truncate">Queue: <strong>{ride.remaining_queue ?? Math.max(0, (ride.total_queue_count || 0) - (ride.current_batch_occupancy || 0))}</strong> waiting</span>
+                                  </div>
+                                  <div className="flex items-center gap-1 text-slate-600 justify-end">
+                                    <Clock size={12} className="text-slate-400 shrink-0" />
+                                    <span className="truncate">Next: <strong>Batch #{ride.next_boarding_batch || (ride.current_batch_number + 1)}</strong> ({ride.next_batch_wait_minutes || 0}m)</span>
+                                  </div>
+                                </div>
+
+                                {/* Active Batches Cards List */}
+                                {(!ride.active_batches || ride.active_batches.length === 0) ? (
+                                  <div className="p-3 bg-slate-50/80 border border-dashed border-slate-200 rounded-xl text-center">
+                                    <span className="text-xs font-bold text-slate-500 flex items-center justify-center gap-1.5">
+                                      <span className="w-2 h-2 rounded-full bg-slate-400 inline-block" />
+                                      No Active Batches
+                                    </span>
+                                    <p className="text-[10px] text-slate-400 mt-0.5">Ride is currently idle with no active batches</p>
+                                  </div>
+                                ) : (
+                                  <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-200">
+                                    {ride.active_batches.map((batch: any, bIdx: number) => {
+                                      // Status color styling: 🔵 Waiting | 🟡 Boarding | 🟢 Riding | 🔴 Maintenance | ⚪ Idle
+                                      const statusConfig =
+                                        batch.status === 'Riding' ? { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200', dot: '🟢' } :
+                                          batch.status === 'Boarding' ? { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200', dot: '🟡' } :
+                                            batch.status === 'Waiting' ? { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200', dot: '🔵' } :
+                                              batch.status === 'Maintenance' ? { bg: 'bg-rose-50', text: 'text-rose-700', border: 'border-rose-200', dot: '🔴' } :
+                                                { bg: 'bg-slate-100', text: 'text-slate-600', border: 'border-slate-200', dot: '⚪' };
+
+                                      const occupancyPct = Math.min(100, Math.round((batch.passengers / (batch.capacity || ride.capacity || 40)) * 100));
+
+                                      return (
+                                        <div key={bIdx} className={`p-2.5 rounded-xl border ${statusConfig.bg} ${statusConfig.border} transition-all space-y-1.5`}>
+                                          <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-1.5">
+                                              <span className="text-xs">{statusConfig.dot}</span>
+                                              <span className="text-xs font-black text-slate-800 font-poppins">Batch #{batch.batch_number}</span>
+                                            </div>
+                                            <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider border bg-white/90 ${statusConfig.text} ${statusConfig.border}`}>
+                                              {batch.status}
+                                            </span>
+                                          </div>
+
+                                          <div className="grid grid-cols-2 gap-2 text-[11px]">
+                                            <div>
+                                              <span className="text-slate-400 font-medium block text-[10px]">Passengers</span>
+                                              <span className="font-bold text-slate-800">{batch.occupancy_display || `${batch.passengers}/${batch.capacity || ride.capacity}`}</span>
+                                              <div className="w-full bg-slate-200/80 rounded-full h-1 mt-1 overflow-hidden">
+                                                <div className={`h-full ${batch.status === 'Riding' ? 'bg-emerald-500' : batch.status === 'Boarding' ? 'bg-amber-500' : 'bg-blue-500'}`} style={{ width: `${occupancyPct}%` }} />
+                                              </div>
+                                            </div>
+
+                                            <div>
+                                              <span className="text-slate-400 font-medium block text-[10px]">Pos Range</span>
+                                              <span className="font-bold text-slate-800 font-mono text-[10px]">{batch.position_range || '—'}</span>
+                                            </div>
+                                          </div>
+
+                                          <div className="flex items-center justify-between pt-1 border-t border-slate-200/60 text-[10px] text-slate-500 font-medium">
+                                            <span>Start: <strong>{batch.estimated_start_time}</strong></span>
+                                            <span>End: <strong>{batch.estimated_end_time}</strong></span>
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                )}
+                              </div>
                             </div>
 
                             <div className="flex gap-2 pt-3 border-t border-slate-100">
@@ -1013,11 +1137,11 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                     <button onClick={() => setEditingRide(null)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer">
                       <X size={20} />
                     </button>
-                    
+
                     <h3 className="text-lg font-black text-slate-800 mb-6 font-poppins flex items-center gap-2">
                       <span>{editingRide.emoji}</span> Edit Ride Operations: {editingRide.name}
                     </h3>
-                    
+
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
@@ -1129,11 +1253,10 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                         <button
                           key={s}
                           onClick={() => setRestaurantFilter(s.toLowerCase())}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
-                            (restaurantFilter === s.toLowerCase()) 
-                              ? 'bg-slate-900 text-white' 
-                              : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
-                          }`}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${(restaurantFilter === s.toLowerCase())
+                            ? 'bg-slate-900 text-white'
+                            : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                            }`}
                         >
                           {s}
                         </button>
@@ -1165,7 +1288,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                             </div>
 
                             <p className="text-xs text-slate-400 font-medium leading-relaxed line-clamp-2">{rest.desc}</p>
-                            
+
                             {/* Mini counters */}
                             <div className="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl text-center">
                               <div>
@@ -1324,7 +1447,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                     {/* Pricing grid table */}
                     <div className="bg-white border border-slate-200/70 rounded-3xl p-6 shadow-sm">
                       <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-4">Ticket Type Pricing</h3>
-                      
+
                       <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                           <thead>
@@ -1343,9 +1466,8 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                                 <td className="py-3.5 text-right font-mono font-bold">₹{tt.base_price}/-</td>
                                 <td className="py-3.5 text-right font-mono">{tt.seasonal_multiplier}x</td>
                                 <td className="py-3.5 text-center">
-                                  <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
-                                    tt.is_enabled ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
-                                  }`}>
+                                  <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${tt.is_enabled ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
+                                    }`}>
                                     {tt.is_enabled ? 'Enabled' : 'Disabled'}
                                   </span>
                                 </td>
@@ -1368,7 +1490,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                   {/* Right Column: Dynamic Invoice Preview Calculator */}
                   <div className="bg-white border border-slate-200/70 rounded-3xl p-6 shadow-sm flex flex-col h-[520px]">
                     <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-4">Billing Calculator</h3>
-                    
+
                     <div className="space-y-4 flex-1 flex flex-col justify-between">
                       <div className="space-y-3">
                         <div>
@@ -1420,7 +1542,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                       {/* Invoice sheet preview */}
                       <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-3">
                         <span className="text-[10px] text-slate-400 uppercase tracking-wider font-black block border-b border-slate-200/60 pb-1">Tax Invoice Preview</span>
-                        
+
                         <div className="space-y-1.5 text-xs text-slate-500">
                           <div className="flex justify-between">
                             <span>Ticket Subtotal:</span>
@@ -1516,7 +1638,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                   {/* Left panel: campaign publisher */}
                   <div className="bg-white border border-slate-200/70 rounded-3xl p-6 shadow-sm space-y-4">
                     <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Publish New Promo Campaign</h3>
-                    
+
                     <div className="space-y-3 text-xs">
                       <div>
                         <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Offer Title</label>
@@ -1606,7 +1728,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                   {/* Right panel: offers listing */}
                   <div className="lg:col-span-2 space-y-4">
                     <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest pl-2">Active Web Promotions</h3>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {offers.map(off => {
                         const nameLower = (off.name || '').toLowerCase();
@@ -1642,7 +1764,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                               <p className="text-xs text-slate-400 font-medium leading-relaxed line-clamp-2">
                                 {off.description || 'Active park seasonal discount offer available on booking checkout pages.'}
                               </p>
-                              
+
                               <div className="flex items-center justify-between text-[10px] font-bold text-slate-400 pt-2.5 border-t border-slate-50">
                                 <span>Expires: {off.expiry_date || 'N/A'}</span>
                                 <button
@@ -1674,21 +1796,21 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                     <div className="space-y-4 text-xs font-semibold text-slate-600">
                       <div>
                         <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Simulate Hour of Day</label>
-                        <select 
-                          value={predictHour} 
+                        <select
+                          value={predictHour}
                           onChange={e => setPredictHour(parseInt(e.target.value))}
                           className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 font-bold"
                         >
                           {[9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21].map(h => (
-                            <option key={h} value={h}>{h === 12 ? '12:00 PM (Noon)' : h > 12 ? `${h-12}:00 PM` : `${h}:00 AM`}</option>
+                            <option key={h} value={h}>{h === 12 ? '12:00 PM (Noon)' : h > 12 ? `${h - 12}:00 PM` : `${h}:00 AM`}</option>
                           ))}
                         </select>
                       </div>
 
                       <div>
                         <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Simulate Weather</label>
-                        <select 
-                          value={predictWeather} 
+                        <select
+                          value={predictWeather}
                           onChange={e => setPredictWeather(e.target.value)}
                           className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 font-bold"
                         >
@@ -1700,8 +1822,8 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
 
                       <div>
                         <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Simulate Day of Week</label>
-                        <select 
-                          value={predictDay} 
+                        <select
+                          value={predictDay}
                           onChange={e => setPredictDay(parseInt(e.target.value))}
                           className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 font-bold"
                         >
@@ -1738,9 +1860,8 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                           </div>
                           <div>
                             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Crowd Density</span>
-                            <span className={`text-sm font-black block mt-2.5 ${
-                              predictionResult.predicted_crowd_count > 1500 ? 'text-red-500' : 'text-emerald-500'
-                            }`}>
+                            <span className={`text-sm font-black block mt-2.5 ${predictionResult.predicted_crowd_count > 1500 ? 'text-red-500' : 'text-emerald-500'
+                              }`}>
                               {predictionResult.predicted_crowd_count > 1500 ? 'High Risk' : 'Normal'}
                             </span>
                           </div>
@@ -1764,9 +1885,9 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                                     <span className="text-[10px] font-bold uppercase text-slate-400">{z.density} guests · {z.status}</span>
                                   </div>
                                   <div className="w-full bg-slate-100 rounded-full h-2">
-                                    <div className="h-2 rounded-full" style={{ 
-                                      width: `${densityPercent}%`, 
-                                      background: z.id === 'thriller' ? '#ef4444' : z.id === 'water' ? '#06b6d4' : '#10b981' 
+                                    <div className="h-2 rounded-full" style={{
+                                      width: `${densityPercent}%`,
+                                      background: z.id === 'thriller' ? '#ef4444' : z.id === 'water' ? '#06b6d4' : '#10b981'
                                     }} />
                                   </div>
                                 </div>
@@ -1922,9 +2043,8 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                             <td className="py-3 text-right font-mono text-emerald-600 font-bold">-₹{tx.discount}</td>
                             <td className="py-3 text-right font-mono font-bold text-slate-800">₹{tx.total_paid}/-</td>
                             <td className="py-3 text-center">
-                              <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
-                                tx.payment_status === 'Paid' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
-                              }`}>
+                              <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${tx.payment_status === 'Paid' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
+                                }`}>
                                 {tx.payment_status}
                               </span>
                             </td>
@@ -1942,7 +2062,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                   {/* Left compose panel */}
                   <div className="bg-white border border-slate-200/70 rounded-3xl p-6 shadow-sm space-y-4">
                     <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Compose Broadcast Email</h3>
-                    
+
                     <div className="space-y-4 text-xs font-semibold">
                       <div>
                         <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Template Layout</label>
@@ -2015,27 +2135,26 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                     <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest pl-2">Live Mailbox Preview</h3>
                     <div className="bg-slate-100 rounded-3xl p-5 border border-slate-200 max-h-[550px] overflow-y-auto">
                       <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden w-full max-w-xl mx-auto text-sm">
-                        
+
                         {/* Render preview frame based on choices */}
-                        <div className={`p-6 text-center text-white ${
-                          emailTemplate === 'emergency_alert' ? 'bg-gradient-to-r from-red-600 to-red-800' :
+                        <div className={`p-6 text-center text-white ${emailTemplate === 'emergency_alert' ? 'bg-gradient-to-r from-red-600 to-red-800' :
                           emailTemplate === 'ride_maintenance' ? 'bg-gradient-to-r from-amber-500 to-amber-700' :
-                          emailTemplate === 'offer_announcement' ? 'bg-gradient-to-r from-purple-500 to-purple-700' :
-                          emailTemplate === 'park_closing' ? 'bg-gradient-to-r from-slate-600 to-slate-800' :
-                          emailTemplate === 'new_attraction' ? 'bg-gradient-to-r from-emerald-500 to-emerald-700' : 'bg-blue-600'
-                        }`}>
+                            emailTemplate === 'offer_announcement' ? 'bg-gradient-to-r from-purple-500 to-purple-700' :
+                              emailTemplate === 'park_closing' ? 'bg-gradient-to-r from-slate-600 to-slate-800' :
+                                emailTemplate === 'new_attraction' ? 'bg-gradient-to-r from-emerald-500 to-emerald-700' : 'bg-blue-600'
+                          }`}>
                           <h1 className="margin-0 font-extrabold text-xl">🎢 THRILLVERSE</h1>
                           <p className="text-[10px] uppercase font-bold tracking-widest mt-1 opacity-80">
                             {emailTemplate.replace('_', ' ')}
                           </p>
                         </div>
-                        
+
                         <div className="p-8 space-y-4">
                           <h2 className="text-base font-black text-slate-800 border-b border-slate-100 pb-2">{emailSubject}</h2>
                           <div className="text-slate-600 leading-relaxed font-medium whitespace-pre-line text-xs">
                             {emailMessage}
                           </div>
-                          
+
                           <div className="p-3 bg-slate-50 border-l-4 border-blue-600 rounded text-[10px] text-slate-400 font-medium">
                             This is an official system update dispatched by ThrillVerse Theme Park Administration to all registered users.
                           </div>
@@ -2046,62 +2165,6 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              )}
-
-              {/* TAB 10: SETTINGS */}
-              {activeTab === 'settings' && (
-                <div className="bg-white border border-slate-200/70 rounded-3xl p-6 shadow-sm max-w-xl space-y-6">
-                  <div className="border-b border-slate-100 pb-4">
-                    <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Admin settings panel</h3>
-                    <p className="text-xs text-slate-400 mt-1">Configure global operational attributes for the theme park portal</p>
-                  </div>
-
-                  <div className="space-y-4 text-xs font-semibold text-slate-600">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Park Opening Time</label>
-                        <input
-                          type="time"
-                          defaultValue="09:00"
-                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 font-bold"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Park Closing Time</label>
-                        <input
-                          type="time"
-                          defaultValue="22:00"
-                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 font-bold"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Virtual Queue Dispatch Interval (Minutes)</label>
-                      <input
-                        type="number"
-                        defaultValue={5}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 font-bold"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Admin Security Passcode Update</label>
-                      <input
-                        type="password"
-                        placeholder="••••••••"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 font-bold"
-                      />
-                    </div>
-
-                    <button
-                      onClick={() => toast.success('Park settings saved successfully!')}
-                      className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-md cursor-pointer mt-4"
-                    >
-                      Save Configuration
-                    </button>
                   </div>
                 </div>
               )}

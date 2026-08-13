@@ -187,9 +187,10 @@ function Navbar({ page, setPage, scrolled }: { page:string; setPage:(p:string)=>
         <div className="absolute top-16 right-4 w-80 rounded-2xl overflow-hidden shadow-2xl z-50 bg-white" style={{border:"1px solid rgba(26,110,245,0.12)"}}>
           <div className="px-4 py-3 flex items-center justify-between" style={{borderBottom:"1px solid rgba(26,110,245,0.08)"}}>
             <span className="font-bold text-sm" style={{color:BLUE}}>Notifications</span>
-            <span className="text-xs px-2 py-0.5 rounded-full font-bold" style={{background:"#fff0ea",color:ORANGE}}>3 new</span>
+            <span className="text-xs px-2 py-0.5 rounded-full font-bold" style={{background:"#fff0ea",color:ORANGE}}>4 new</span>
           </div>
-          {[{icon:"🎢",text:"Your Queue #12 for Thunder Loop is almost ready!",time:"2m ago"},
+          {[{icon:"☁️",text:"Friday 2:00 PM Update: Cloudy weather with 465 crowd inside the park.",time:"Friday 2:00 PM"},
+            {icon:"🎢",text:"Your Queue #12 for Thunder Loop is almost ready!",time:"2m ago"},
             {icon:"🎉",text:"Neon Nights Festival starts in 2 hours!",time:"1h ago"},
             {icon:"🌊",text:"Splash River wait dropped to 18 min.",time:"3h ago"}
           ].map((n,i)=>(
@@ -275,10 +276,10 @@ function SectionHeader({ title, accent, sub }: { title:string; accent:string; su
 const RESTAURANTS = [
   {
     id:1, name:"Spice Arena",   cuisine:"Indian",          tagline:"Authentic Desi Flavours",
-    location:"Near Water Zone · Zone B", wait:"12 min", rating:4.6, reviews:342,
+    location:"ThrillVerse Castle", wait:"12 min", rating:4.6, reviews:342,
     hours:"10:00 AM – 9:30 PM", priceRange:"₹150 – ₹400",
     img:"https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop&auto=format",
-    desc:"Authentic Indian street food, thalis and refreshing drinks. Perfect for families after an exciting ride in Zone B.",
+    desc:"Authentic Indian street food, thalis and refreshing drinks. Located at ThrillVerse Castle.",
     popular:[
       {name:"Masala Thali",   price:"₹249", tag:"Best Seller"},
       {name:"Paneer Tikka",   price:"₹179", tag:"🌶️ Spicy"  },
@@ -289,10 +290,10 @@ const RESTAURANTS = [
   },
   {
     id:2, name:"Burger Bay",    cuisine:"Fast Food",        tagline:"Quick & Tasty Bites",
-    location:"Main Entrance · Zone A", wait:"5 min", rating:4.5, reviews:521,
+    location:"Family Zone", wait:"5 min", rating:4.5, reviews:521,
     hours:"9:00 AM – 10:00 PM", priceRange:"₹80 – ₹350",
     img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&h=400&fit=crop&auto=format",
-    desc:"Park's fastest quick-service spot. Juicy burgers, crispy fries and cold shakes — the ideal fuel for thrill seekers.",
+    desc:"Park's fastest quick-service spot. Juicy burgers, crispy fries and cold shakes — located in the Family Zone.",
     popular:[
       {name:"Classic Smash Burger", price:"₹199", tag:"Fan Favourite"},
       {name:"Cheese Fries",         price:"₹129", tag:"Must Try"     },
@@ -303,10 +304,10 @@ const RESTAURANTS = [
   },
   {
     id:3, name:"Pizza Palace",  cuisine:"Italian",          tagline:"Wood-Fired Perfection",
-    location:"Central Plaza · Zone C", wait:"15 min", rating:4.7, reviews:289,
+    location:"Water Zone", wait:"15 min", rating:4.7, reviews:289,
     hours:"11:00 AM – 9:00 PM", priceRange:"₹200 – ₹600",
     img:"https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=400&fit=crop&auto=format",
-    desc:"Wood-fired pizzas and fresh pastas in a cozy Italian-themed setting at the heart of the park.",
+    desc:"Wood-fired pizzas and fresh pastas in a cozy Italian-themed setting located in the Water Zone.",
     popular:[
       {name:"Margherita Pizza",   price:"₹299", tag:"Classic"      },
       {name:"Pepperoni Blast",    price:"₹379", tag:"🔥 Hot Pick"  },
@@ -317,10 +318,10 @@ const RESTAURANTS = [
   },
   {
     id:4, name:"Splash Café",   cuisine:"Café & Beverages", tagline:"Cool Drinks & Snacks",
-    location:"Water Zone Entry · Zone B", wait:"3 min", rating:4.4, reviews:198,
+    location:"Kids Zone", wait:"3 min", rating:4.4, reviews:198,
     hours:"9:00 AM – 10:00 PM", priceRange:"₹50 – ₹250",
     img:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&h=400&fit=crop&auto=format",
-    desc:"Refreshing cold drinks, ice creams and light snacks right at the Water Zone entry — perfect post-ride cool down.",
+    desc:"Refreshing cold drinks, ice creams and light snacks located in the Kids Zone.",
     popular:[
       {name:"Fresh Lemonade",   price:"₹79",  tag:"Park Favourite"},
       {name:"Ice Cream Sundae", price:"₹129", tag:"Kids Love It"  },
@@ -336,34 +337,116 @@ const RESTAURANTS = [
 // ═══════════════════════════════════════════════════════════════════════════
 function HomePage({ setPage }: { setPage:(p:string)=>void }) {
   const aiEndRef = useRef<HTMLDivElement>(null);
-  const [aiOpen, setAiOpen]   = useState(false);
-  const [aiMsg, setAiMsg]     = useState("");
-  const [aiChat, setAiChat]   = useState<{role:string;text:string}[]>([
-    {role:"bot",text:"Hi! I'm ThrillBot 🎢 Ask me about wait times, ride picks, food, or the fastest park route!"},
+  const [aiOpen, setAiOpen] = useState(false);
+  const [aiMsg, setAiMsg] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiChat, setAiChat] = useState<{ role: string; text: string }[]>([
+    { role: "bot", text: "Hi! I'm ThrillBot 🎢 Powered by Gemini AI. Ask me about wait times, ride picks, food, or the fastest park route!" },
   ]);
   const [selectedRestaurant, setSelectedRestaurant] = useState<typeof RESTAURANTS[0]|null>(null);
 
-  useEffect(()=>{
-    if(aiOpen && aiEndRef.current) aiEndRef.current.scrollIntoView({behavior:"smooth"});
-  },[aiChat,aiOpen]);
+  useEffect(() => {
+    if (aiOpen && aiEndRef.current) aiEndRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [aiChat, aiOpen, aiLoading]);
 
-  const sendAiMsg = () => {
-    if(!aiMsg.trim()) return;
+  const callGeminiForThrillBot = async (userMsg: string, chatHistory: { role: string; text: string }[]): Promise<string> => {
+    const apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || "AIzaSyDTUw0ApJ1ZS02GAwpiSExjPY7hotQsYBA";
+    const systemPrompt = `You are ThrillBot 🎢, the friendly, helpful, and intelligent AI concierge for ThrillVerse Amusement Park.
+
+CRITICAL THRILLVERSE RIDES KNOWLEDGE (ALL 16 RIDES ARE REAL, ACTIVE & ICONIC):
+- Thriller Zone (Zone A):
+  1. Nitro (Flagship hyper-coaster, extreme thrill, 45 min wait, 130cm min height)
+  2. Scream Machine (360° pendulum ride, extreme thrill, 35 min wait, 135cm min height)
+  3. SpaceX (High-speed indoor dark coaster, 28 min wait, 125cm min height)
+  4. Dare 2 Drop (148ft drop tower, 40 min wait, 120cm min height)
+- Water Zone (Zone B):
+  5. Dino Splashdown (Mega water coaster with massive splash, 28 min wait, 110cm min height)
+  6. Splash Ahoy! (Pirate water splash ride, 22 min wait, 100cm min height)
+- Family Zone (Zone C):
+  7. Gold Rush Express (Mine train family coaster, 15 min wait, 90cm min height)
+  8. Alibaba Aur Chalis Chorr (Iconic Arabian Nights dark ride & laser shooting, 25 min wait - ONE OF THE BEST & MOST POPULAR FAMILY RIDES IN THRILLVERSE!)
+  9. Bhangarh: The Curse (Immersive haunted dark ride, 12 min wait)
+  10. Chai Spin Chaos (Spinning giant teacups ride, 10 min wait)
+  11. Wrath of the Gods (Spectacular live-action & special fx dark show/ride, 30 min wait)
+  12. Magic Carousel (Classic grand carousel, 5 min wait)
+- Kids Zone (Zone D):
+  13. Chhota Bheem – The Ride (Flagship Dholakpur adventure coaster/ride, 10 min wait - EXTREMELY POPULAR & ONE OF THE BEST KIDS/FAMILY RIDES IN THRILLVERSE!)
+  14. Elephant Ride (Flying elephant ride, 5 min wait)
+  15. Mini Fall (Junior drop tower, 15 min wait)
+  16. Cinema 360 – Prince of the Dark Waters (360° dome theater experience, 10 min wait)
+
+MAP, ROUTE & NAVIGATION INSTRUCTIONS:
+- Whenever a user asks for directions, routes, how to go between rides (e.g. "Chhota Bheem ride to Alibaba"), or location maps, YOU MUST ALWAYS SAY:
+  "You can use our Virtual Map feature in ThrillVerse to view interactive paths, live walk times, and turn-by-turn navigation!"
+- Give accurate distance/route guidance. For instance, to go from Chhota Bheem – The Ride (Kids Zone D) to Alibaba Aur Chalis Chorr (Family Zone C), walk North past the Kids Hub into the Family Promenade (approx 3 min walk).
+
+PARK INFORMATION:
+- Hours: 9:00 AM – 10:00 PM daily.
+- Tone: Enthusiastic, friendly, park-savvy, concise (2-4 sentences), with fun emojis! NEVER claim a ThrillVerse ride does not exist!`;
+
+    const contents: any[] = [
+      { role: "user", parts: [{ text: systemPrompt }] },
+      { role: "model", parts: [{ text: "Understood! I'm ThrillBot 🎢, your personal ThrillVerse guide powered by Gemini AI! I know all 16 rides like Chhota Bheem – The Ride and Alibaba Aur Chalis Chorr, and I will always guide guests to use our Virtual Map feature for navigation!" }] }
+    ];
+
+    chatHistory.slice(-6).forEach(m => {
+      contents.push({
+        role: m.role === "user" ? "user" : "model",
+        parts: [{ text: m.text }]
+      });
+    });
+
+    contents.push({ role: "user", parts: [{ text: userMsg }] });
+
+    const models = ["gemini-3.6-flash", "gemini-3.5-flash", "gemini-2.0-flash"];
+
+    for (const model of models) {
+      try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contents })
+        });
+        const data = await res.json();
+        if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+          return data.candidates[0].content.parts[0].text;
+        }
+      } catch (e) {
+        console.warn(`Gemini model ${model} error:`, e);
+      }
+    }
+
+    const lower = userMsg.toLowerCase();
+    if (lower.includes("map") || lower.includes("route") || lower.includes("direction") || lower.includes("bheem") || lower.includes("alibaba") || lower.includes("where")) {
+      return "You can use our Virtual Map feature in ThrillVerse to view interactive 3D paths, live walk times, and turn-by-turn navigation! 🗺️ Chhota Bheem – The Ride (Zone D) and Alibaba Aur Chalis Chorr (Zone C) are two of our absolute best rides. To walk from Chhota Bheem to Alibaba, head North through the Family Zone promenade (approx 3 min walk)!";
+    }
+
+    const map: Record<string, string> = {
+      wait: "Shortest wait right now: Magic Carousel at 5 min, Chhota Bheem at 10 min! Nitro 45 min, Alibaba 25 min.",
+      ride: "Chhota Bheem – The Ride (Kids Zone) and Alibaba Aur Chalis Chorr (Family Zone) are two of ThrillVerse's top flagship rides! Nitro is great for extreme thrill-seekers.",
+      food: "Spice Arena near Water Zone: 12-min wait. Burger Bay at the entrance is quickest right now.",
+      route: "You can use our Virtual Map feature in ThrillVerse for live route navigation! Recommended route: Nitro → Alibaba → Chhota Bheem.",
+    };
+    return map[Object.keys(map).find(k => lower.includes(k)) || ""] ||
+      "ThrillVerse has 16 amazing rides across 4 zones! You can use our Virtual Map feature for live navigation. Need ride info, wait times, or food tips?";
+  };
+
+  const sendAiMsg = async () => {
+    if (!aiMsg.trim() || aiLoading) return;
     const msg = aiMsg.trim();
-    setAiChat(c=>[...c,{role:"user",text:msg}]);
+    const historyBefore = [...aiChat];
+    setAiChat(c => [...c, { role: "user", text: msg }]);
     setAiMsg("");
-    setTimeout(()=>{
-      const map: Record<string,string> = {
-        wait:"Shortest wait right now: Sky Wheel at 10 min! Thunder Loop 22 min, Splash River 18 min.",
-        ride:"Based on crowd data: Sky Wheel has minimal wait and great views! For thrills, hit Thunder Loop before 2 PM.",
-        food:"Spice Arena near Water Zone: 12-min wait. Burger Bay at the entrance is quickest right now.",
-        route:"Best route: Thunder Loop → Aqua Twister → Sky Wheel. Saves ~40% walking.",
-      };
-      const lower=msg.toLowerCase();
-      const reply=map[Object.keys(map).find(k=>lower.includes(k))||""]||
-        "The park has 17 rides across 4 zones. Crowd level: Moderate. Need ride info, food tips, or an optimised route?";
-      setAiChat(c=>[...c,{role:"bot",text:reply}]);
-    },700);
+    setAiLoading(true);
+
+    try {
+      const reply = await callGeminiForThrillBot(msg, historyBefore);
+      setAiChat(c => [...c, { role: "bot", text: reply }]);
+    } catch {
+      setAiChat(c => [...c, { role: "bot", text: "I'm having a brief connection issue. Please try asking me again! 🎢" }]);
+    } finally {
+      setAiLoading(false);
+    }
   };
 
   const topRides = ALL_RIDES.filter(r=>r.status==="open").sort((a,b)=>b.rating-a.rating).slice(0,6);
@@ -769,11 +852,18 @@ function HomePage({ setPage }: { setPage:(p:string)=>void }) {
                 <div className="max-w-[80%] px-3 py-2 rounded-2xl text-xs leading-relaxed" style={{background:m.role==="user"?`linear-gradient(135deg,${BLUE},${BLUE2})`:"#f0f5ff",color:m.role==="user"?"#fff":"#1a3a6e"}}>{m.text}</div>
               </div>
             ))}
+            {aiLoading && (
+              <div className="flex justify-start">
+                <div className="px-3 py-2 rounded-2xl text-xs bg-[#f0f5ff] text-[#5a78a8] flex items-center gap-1.5 animate-pulse">
+                  <span>ThrillBot is thinking...</span>
+                </div>
+              </div>
+            )}
             <div ref={aiEndRef}/>
           </div>
           <div className="p-3 flex gap-2" style={{borderTop:"1px solid rgba(26,110,245,0.08)"}}>
-            <input value={aiMsg} onChange={e=>setAiMsg(e.target.value)} onKeyDown={e=>e.key==="Enter"&&sendAiMsg()} placeholder="Ask about rides, waits, food..." className="flex-1 px-3 py-2 rounded-xl text-xs outline-none" style={{background:"#f0f5ff",color:"#0d1f3c",caretColor:BLUE}}/>
-            <button onClick={sendAiMsg} className="w-8 h-8 rounded-xl flex items-center justify-center hover:scale-110 transition-transform" style={{background:`linear-gradient(135deg,${BLUE},${BLUE2})`}}><ArrowRight size={14} className="text-white"/></button>
+            <input value={aiMsg} onChange={e=>setAiMsg(e.target.value)} onKeyDown={e=>e.key==="Enter"&&sendAiMsg()} disabled={aiLoading} placeholder={aiLoading ? "Gemini is typing..." : "Ask about rides, waits, food..."} className="flex-1 px-3 py-2 rounded-xl text-xs outline-none disabled:opacity-50" style={{background:"#f0f5ff",color:"#0d1f3c",caretColor:BLUE}}/>
+            <button onClick={sendAiMsg} disabled={aiLoading} className="w-8 h-8 rounded-xl flex items-center justify-center hover:scale-110 transition-transform disabled:opacity-50" style={{background:`linear-gradient(135deg,${BLUE},${BLUE2})`}}><ArrowRight size={14} className="text-white"/></button>
           </div>
         </div>
       )}

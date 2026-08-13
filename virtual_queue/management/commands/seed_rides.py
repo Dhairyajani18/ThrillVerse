@@ -7,7 +7,7 @@ from django.utils import timezone
 from authentication.models import UserProfile
 from virtual_queue.models import (
     Ride, Restaurant, MenuItem, RestaurantOrder, TicketType,
-    SystemConfig, Offer, PromoCode, Booking, Visitor, Invoice, BookingPayment
+    SystemConfig, Offer, PromoCode, Booking, Visitor, Invoice, BookingPayment, VirtualQueue
 )
 
 class Command(BaseCommand):
@@ -78,7 +78,7 @@ class Command(BaseCommand):
         admin_email = "admin@thrillverse.com"
         admin_password = "admin@123"
 
-        admin_user = User.objects.filter(email=admin_email).first()
+        admin_user = User.objects.filter(username=admin_username).first() or User.objects.filter(email=admin_email).first()
         if not admin_user:
             admin_user = User.objects.create_user(
                 username=admin_username,
@@ -89,6 +89,7 @@ class Command(BaseCommand):
             )
         else:
             admin_user.username = admin_username
+            admin_user.email = admin_email
             admin_user.set_password(admin_password)
             admin_user.save()
 
@@ -116,33 +117,33 @@ class Command(BaseCommand):
         
         r_spice = Restaurant.objects.create(
             name="Spice Arena", cuisine="Indian", tagline="Authentic Desi Flavours",
-            location="Near Water Zone · Zone B", emoji="🍛", color="#f97316", bg="#fff7f0",
+            location="ThrillVerse Castle", emoji="🍛", color="#f97316", bg="#fff7f0",
             img="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop&auto=format",
-            desc="Authentic Indian street food, thalis and refreshing drinks. Perfect for families after an exciting ride in Zone B.",
+            desc="Authentic Indian street food, thalis and refreshing drinks. Located at ThrillVerse Castle.",
             opening_time="10:00:00", closing_time="21:30:00", status="open", is_featured=True
         )
         
         r_burger = Restaurant.objects.create(
             name="Burger Bay", cuisine="Fast Food", tagline="Quick & Tasty Bites",
-            location="Main Entrance · Zone A", emoji="🍔", color="#f59e0b", bg="#fffbeb",
+            location="Family Zone", emoji="🍔", color="#f59e0b", bg="#fffbeb",
             img="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&h=400&fit=crop&auto=format",
-            desc="Park's fastest quick-service spot. Juicy burgers, crispy fries and cold shakes — the ideal fuel for thrill seekers.",
+            desc="Park's fastest quick-service spot. Juicy burgers, crispy fries and cold shakes — located in the Family Zone.",
             opening_time="09:00:00", closing_time="22:00:00", status="open", is_featured=True
         )
 
         r_pizza = Restaurant.objects.create(
             name="Pizza Palace", cuisine="Italian", tagline="Wood-Fired Perfection",
-            location="Central Plaza · Zone C", emoji="🍕", color="#ef4444", bg="#fff5f5",
+            location="Water Zone", emoji="🍕", color="#ef4444", bg="#fff5f5",
             img="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=400&fit=crop&auto=format",
-            desc="Wood-fired pizzas and fresh pastas in a cozy Italian-themed setting at the heart of the park.",
+            desc="Wood-fired pizzas and fresh pastas in a cozy Italian-themed setting located in the Water Zone.",
             opening_time="11:00:00", closing_time="21:00:00", status="open", is_featured=False
         )
 
         r_cafe = Restaurant.objects.create(
             name="Splash Café", cuisine="Café & Beverages", tagline="Cool Drinks & Snacks",
-            location="Water Zone Entry · Zone B", emoji="☕", color="#06b6d4", bg="#f0fbfe",
+            location="Kids Zone", emoji="☕", color="#06b6d4", bg="#f0fbfe",
             img="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&h=400&fit=crop&auto=format",
-            desc="Refreshing cold drinks, ice creams and light snacks right at the Water Zone entry — perfect post-ride cool down.",
+            desc="Refreshing cold drinks, ice creams and light snacks located in the Kids Zone.",
             opening_time="09:00:00", closing_time="22:00:00", status="open", is_featured=False
         )
 
@@ -208,9 +209,9 @@ class Command(BaseCommand):
             {
                 "name": "Monsoon Magic at ThrillVerse",
                 "adult_price": 999, "child_price": 699, "senior_price": 799,
-                "banner_image": "https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=600&h=300&fit=crop&auto=format",
-                "description": "Splash into adventure with extra discounts during rainy days!",
-                "discount_percentage": 15, "promo_code": "RAINY15",
+                "banner_image": "https://images.unsplash.com/photo-1562874662-050427780b20?w=600&h=380&fit=crop&auto=format",
+                "description": "Experience the magic of the monsoon at ThrillVerse! Enjoy thrilling rides, water slides, F&B.",
+                "discount_percentage": 30, "promo_code": "MONSOON30",
                 "start_date": datetime.date.today(),
                 "expiry_date": datetime.date.today() + datetime.timedelta(days=90),
                 "applicable_ticket": "All",
@@ -219,24 +220,57 @@ class Command(BaseCommand):
             {
                 "name": "Happy Tuesday",
                 "adult_price": 899, "child_price": 599, "senior_price": 699,
-                "banner_image": "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600&h=300&fit=crop&auto=format",
-                "description": "Beat the weekend crowds and enjoy reduced pricing every Tuesday.",
-                "discount_percentage": 10, "promo_code": "TUESDAY10",
+                "banner_image": "https://images.unsplash.com/photo-1547675960-7634cf1b0856?w=600&h=380&fit=crop&auto=format",
+                "description": "Mega Thrills, Mini Bills! Flat discounted price on Tuesdays for all theme park rides.",
+                "discount_percentage": 20, "promo_code": "HAPPYTUES",
                 "start_date": datetime.date.today(),
                 "expiry_date": datetime.date.today() + datetime.timedelta(days=180),
                 "applicable_ticket": "Adult, Child",
                 "terms_conditions": "Valid only on Tuesdays. Not valid on public holidays."
             },
             {
+                "name": "Wat-A-Wednesday",
+                "adult_price": 799, "child_price": 599, "senior_price": 649,
+                "banner_image": "https://images.unsplash.com/photo-1631800744177-0e434940e0c8?w=600&h=380&fit=crop&auto=format",
+                "description": "Soak the fun this summer with special water park access starting @ ₹799/- only.",
+                "discount_percentage": 25, "promo_code": "WATWED799",
+                "start_date": datetime.date.today(),
+                "expiry_date": datetime.date.today() + datetime.timedelta(days=180),
+                "applicable_ticket": "Water Park Access",
+                "terms_conditions": "Valid only on Wednesdays. Costume rentals available separately."
+            },
+            {
                 "name": "Bye Bye Exams",
                 "adult_price": 749, "child_price": 549, "senior_price": 599,
-                "banner_image": "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=600&h=300&fit=crop&auto=format",
-                "description": "Celebrate the end of exams with our student-exclusive package!",
-                "discount_percentage": 20, "promo_code": "EXAMOVER",
+                "banner_image": "https://images.unsplash.com/photo-1536302996699-caceffbc68df?w=600&h=380&fit=crop&auto=format",
+                "description": "Exams gone, Life's On! Flat 25% Off for Students with valid student ID card.",
+                "discount_percentage": 25, "promo_code": "STUDENT50",
                 "start_date": datetime.date.today(),
-                "expiry_date": datetime.date.today() + datetime.timedelta(days=30),
+                "expiry_date": datetime.date.today() + datetime.timedelta(days=60),
                 "applicable_ticket": "Child, Adult",
-                "terms_conditions": "Valid Student ID card required at entry gate."
+                "terms_conditions": "Valid physical Student ID card required at entry gate."
+            },
+            {
+                "name": "Adventure & Savings",
+                "adult_price": 899, "child_price": 649, "senior_price": 699,
+                "banner_image": "https://images.unsplash.com/photo-1601930113377-729966035f34?w=600&h=380&fit=crop&auto=format",
+                "description": "Buy 4 tickets get 1 FREE for all theme park and water park zones.",
+                "discount_percentage": 20, "promo_code": "BUY4GET1",
+                "start_date": datetime.date.today(),
+                "expiry_date": datetime.date.today() + datetime.timedelta(days=150),
+                "applicable_ticket": "All",
+                "terms_conditions": "Get one free ticket for every 4 tickets purchased in a single booking."
+            },
+            {
+                "name": "Golden Hour Pass",
+                "adult_price": 599, "child_price": 399, "senior_price": 499,
+                "banner_image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=380&fit=crop&auto=format",
+                "description": "Experience evening rides under golden sunset skies! Entry from 4:00 PM to park closing.",
+                "discount_percentage": 20, "promo_code": "GOLDEN599",
+                "start_date": datetime.date.today(),
+                "expiry_date": datetime.date.today() + datetime.timedelta(days=120),
+                "applicable_ticket": "Evening Pass",
+                "terms_conditions": "Valid for entry starting at 4:00 PM until 10:00 PM."
             }
         ]
 
@@ -245,19 +279,33 @@ class Command(BaseCommand):
             o_obj = Offer.objects.create(**off)
             seeded_offers.append(o_obj)
 
-        p1 = PromoCode.objects.create(
-            code="WELCOME10", discount_type="percentage", discount_value=10.00,
-            min_booking_amount=0.00, max_uses=1000, current_uses=42,
-            expiry_date=datetime.date(2027, 12, 31), is_active=True
-        )
-        p1.applicable_offers.add(*seeded_offers)
-
-        p2 = PromoCode.objects.create(
-            code="SAVE200", discount_type="flat", discount_value=200.00,
-            min_booking_amount=1000.00, max_uses=500, current_uses=18,
-            expiry_date=datetime.date(2027, 12, 31), is_active=True
-        )
-        p2.applicable_offers.add(*seeded_offers)
+        promos_data = [
+            {'code': 'HAPPYTUES', 'discount_type': 'percentage', 'discount_value': 20.00, 'min_booking_amount': 0.00},
+            {'code': 'WATWED799', 'discount_type': 'flat', 'discount_value': 200.00, 'min_booking_amount': 0.00},
+            {'code': 'MONSOON30', 'discount_type': 'percentage', 'discount_value': 30.00, 'min_booking_amount': 0.00},
+            {'code': 'MONSOON25', 'discount_type': 'percentage', 'discount_value': 25.00, 'min_booking_amount': 0.00},
+            {'code': 'STUDENT50', 'discount_type': 'percentage', 'discount_value': 25.00, 'min_booking_amount': 0.00},
+            {'code': 'THRILL20', 'discount_type': 'percentage', 'discount_value': 20.00, 'min_booking_amount': 0.00},
+            {'code': 'THRILL50', 'discount_type': 'flat', 'discount_value': 200.00, 'min_booking_amount': 0.00},
+            {'code': 'SNOW499', 'discount_type': 'flat', 'discount_value': 100.00, 'min_booking_amount': 0.00},
+            {'code': 'BUY4GET1', 'discount_type': 'percentage', 'discount_value': 20.00, 'min_booking_amount': 0.00},
+            {'code': 'GOLDEN599', 'discount_type': 'flat', 'discount_value': 150.00, 'min_booking_amount': 0.00},
+            {'code': 'WELCOME10', 'discount_type': 'percentage', 'discount_value': 10.00, 'min_booking_amount': 0.00},
+            {'code': 'SAVE200', 'discount_type': 'flat', 'discount_value': 200.00, 'min_booking_amount': 0.00},
+        ]
+        for p in promos_data:
+            PromoCode.objects.get_or_create(
+                code=p['code'],
+                defaults={
+                    'discount_type': p['discount_type'],
+                    'discount_value': p['discount_value'],
+                    'min_booking_amount': p['min_booking_amount'],
+                    'max_uses': 1000,
+                    'current_uses': 5,
+                    'expiry_date': datetime.date(2027, 12, 31),
+                    'is_active': True
+                }
+            )
 
         # -------------------------------------------------------------
         # 6. SEED MOCK TRANSACTIONS AND ORDERS (FOR DASHBOARD DATA)
@@ -329,20 +377,70 @@ class Command(BaseCommand):
                     created_at=booking.created_at
                 )
                 
-                BookingPayment.objects.create(
-                    booking=booking,
-                    user=customer_user,
-                    razorpay_order_id=f"order_{uuid.uuid4().hex[:12]}",
-                    razorpay_payment_id=f"pay_{uuid.uuid4().hex[:12]}",
-                    razorpay_signature="sig_verified",
-                    amount=total,
-                    total_paid=total,
-                    payment_status="Paid",
-                    payment_method=random.choice(payment_methods),
-                    promo_code=p2 if disc > 0 else None,
-                    discount_amount=disc,
-                    gst_amount=gst,
-                    transaction_time=booking.created_at
+        first_promo = PromoCode.objects.filter(code='WELCOME10').first() or PromoCode.objects.first()
+        all_users = list(User.objects.all())
+        admin_user = User.objects.filter(username='admin').first() or (all_users[0] if all_users else None)
+        # Seed ticket booking payments for analytics
+        for idx in range(35):
+            days_ago = random.randint(0, 14)
+            txn_date = today_dt - datetime.timedelta(days=days_ago, hours=random.randint(1, 10))
+            offer = random.choice(seeded_offers) if seeded_offers else None
+            sub = random.choice([799, 999, 1499, 2199])
+            disc = 200 if random.random() > 0.6 else 0
+            gst = round((sub - disc) * 0.18, 2)
+            total = round(sub - disc + gst + 50, 2)
+            
+            customer_user = random.choice(all_users) if all_users else admin_user
+            
+            booking = Booking.objects.create(
+                booking_id=f"TV-{uuid.uuid4().hex[:8].upper()}",
+                user=customer_user,
+                offer=offer,
+                visit_date=txn_date.date(),
+                primary_visitor_name=customer_user.first_name or customer_user.username,
+                primary_visitor_email=customer_user.email,
+                primary_visitor_phone="9876543210",
+                status="payment_successful"
+            )
+            
+            BookingPayment.objects.create(
+                booking=booking,
+                user=customer_user,
+                razorpay_order_id=f"order_{uuid.uuid4().hex[:12]}",
+                razorpay_payment_id=f"pay_{uuid.uuid4().hex[:12]}",
+                razorpay_signature="sig_verified",
+                amount=total,
+                total_paid=total,
+                payment_status="Paid",
+                payment_method=random.choice(payment_methods),
+                promo_code=first_promo if disc > 0 else None,
+                discount_amount=disc,
+                gst_amount=gst,
+                transaction_time=booking.created_at
+            )
+
+        # Enqueue 25 dummy users into Nitro ride queue
+        nitro_ride = Ride.objects.filter(name='Nitro').first()
+        if nitro_ride:
+            VirtualQueue.objects.filter(ride=nitro_ride).delete()
+            for i in range(1, 26):
+                u, _ = User.objects.get_or_create(
+                    username=f"nitro_rider_{i}",
+                    defaults={
+                        'email': f"nitro_rider_{i}@example.com",
+                        'first_name': f"Rider",
+                        'last_name': f"#{i}"
+                    }
+                )
+                u.set_password("nitro123")
+                u.save()
+                VirtualQueue.objects.create(
+                    user=u,
+                    ride=nitro_ride,
+                    position=i,
+                    estimated_wait=i * 2,
+                    status="in_queue",
+                    email_sent=True
                 )
 
         self.stdout.write(self.style.SUCCESS("Database seeding completed successfully! All metrics, rides, restaurants, tickets, and analytics seeded."))

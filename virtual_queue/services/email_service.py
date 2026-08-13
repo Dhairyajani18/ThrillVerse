@@ -57,18 +57,21 @@ def trigger_boarding_pass_email(user, queue_entry):
     from django.core.mail import EmailMultiAlternatives
     from django.conf import settings
 
-    recipient_email = getattr(user, 'email', None)
-    if not recipient_email or "@" not in recipient_email or "example.com" in recipient_email:
-        from authentication.models import UserProfile
-        profile = UserProfile.objects.filter(user=user).first()
-        if profile and profile.email and "@" in profile.email and "example.com" not in profile.email:
-            recipient_email = profile.email
-        else:
-            recipient_email = os.getenv('SMTP_FROM', 'dhairyajani4@gmail.com')
+    DEV_DOMAINS = ["example.com", "thrillverse.com", "thrillversepark.com", "test.com", "localhost"]
+    
+    def is_real_external_email(e):
+        if not e or "@" not in e:
+            return False
+        domain = e.split("@")[-1].lower()
+        return not any(d in domain for d in DEV_DOMAINS)
 
-    if not recipient_email or "@" not in recipient_email:
-        print(f"[Boarding Email Skip]: User {user.username} has no valid email address ({recipient_email})")
-        return False
+    default_smtp = os.getenv('SMTP_USER') or getattr(settings, 'EMAIL_HOST_USER', 'dhairyajani18@gmail.com')
+    recipient_email = getattr(user, 'email', None)
+
+    # If recipient email is missing, dummy, or an internal domain, route directly to real SMTP_USER inbox
+    if not recipient_email or not is_real_external_email(recipient_email) or "thrillverse" in str(recipient_email).lower():
+        recipient_email = default_smtp
+        print(f"[Boarding Email Target]: Routing test user {user.username} boarding pass to primary inbox ({recipient_email}).")
 
     ride = queue_entry.ride
     subject = f"🎟️ Boarding Pass Active: {ride.emoji} {ride.name} - ThrillVerse"
@@ -129,7 +132,7 @@ def trigger_boarding_pass_email(user, queue_entry):
     """
 
     try:
-        # Also post to Node.js email service if active
+        # Try sending via Node.js email service first
         port = os.getenv('PORT', '5000')
         url = f"http://127.0.0.1:{port}/send-boarding-pass"
         try:
@@ -141,18 +144,26 @@ def trigger_boarding_pass_email(user, queue_entry):
                 "token": queue_entry.token,
                 "batch_number": queue_entry.batch_number,
                 "min_height": ride.min_height_cm
-            }, timeout=5)
+            }, timeout=12)
             print(f"[Node Email Service Result]: Code {resp.status_code} - {resp.text}")
+            if resp.status_code == 200:
+                print(f"[Boarding Email Dispatched]: Sent via Node email service to {recipient_email}")
+                return True
         except Exception as err:
-            print(f"[Node Email Service Error]: {err}")
+            print(f"[Node Email Service Error/Fallback]: {err}")
 
-        # Send via Django SMTP/Console email dispatch
-        from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@thrillverse.com')
+        # Send via Django SMTP dispatch ONLY if Node service did not handle it
+        raw_from = getattr(settings, 'DEFAULT_FROM_EMAIL', None) or getattr(settings, 'EMAIL_HOST_USER', 'no-reply@thrillverse.com')
+        if "ThrillVerse" not in raw_from:
+            from_email = f"ThrillVerse Parks <{raw_from}>"
+        else:
+            from_email = raw_from
+
         msg = EmailMultiAlternatives(subject, text_content, from_email, [recipient_email])
         msg.attach_alternative(html_content, "text/html")
         msg.send(fail_silently=True)
         
-        print(f"[Boarding Email Sent]: Successfully sent boarding pass email to {recipient_email} for {ride.name} ({queue_entry.token})")
+        print(f"[Boarding Email Sent]: Successfully sent boarding pass email via Django fallback to {recipient_email} for {ride.name} ({queue_entry.token})")
         return True
     except Exception as e:
         print(f"[Boarding Email Error]: {str(e)}")

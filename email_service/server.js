@@ -413,8 +413,6 @@ app.post('/send-boarding-pass', async (req, res) => {
         console.error('[Boarding Email Error]:', err);
         return res.status(500).json({ error: 'Failed to dispatch boarding pass email', details: err.message });
     }
-});tails: err.message });
-    }
 });
 
 // POST endpoint for admin broadcasts

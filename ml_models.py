@@ -79,45 +79,6 @@ def train_wait_time_model():
         pickle.dump(model, f)
     print("Wait time model saved successfully!")
 
-# =====================================================================
-# 3. RIDE RECOMMENDATION ENGINE (Content/Rule-Based Classifier)
-# Predicts the best ride category for a user based on Age and Thrill Preference
-# =====================================================================
-def train_recommendation_model():
-    print("Training Ride Recommendation Engine...")
-    np.random.seed(42)
-    n_samples = 800
-    
-    data = {
-        'user_age': np.random.randint(5, 65, n_samples),
-        'thrill_preference': np.random.choice([1, 2, 3], n_samples, p=[0.3, 0.4, 0.3]) # 1: Low, 2: Med, 3: High
-    }
-    df = pd.DataFrame(data)
-    
-    # Target ride types mapping
-    def assign_ride(row):
-        if row['user_age'] < 10 and row['thrill_preference'] == 1:
-            return 'Kids Carousel'
-        elif row['user_age'] > 12 and row['thrill_preference'] == 3:
-            return 'Mega Rollercoaster'
-        elif row['thrill_preference'] == 2:
-            return 'Water Splash Log Ride'
-        else:
-            return 'Ferris Wheel'
-            
-    df['recommended_ride'] = df.apply(assign_ride, axis=1)
-    
-    X = df[['user_age', 'thrill_preference']]
-    y = df['recommended_ride']
-    
-    model = RandomForestClassifier(n_estimators=50, random_state=42)
-    model.fit(X, y)
-    
-    with open('models/recommendation_model.pkl', 'wb') as f:
-        pickle.dump(model, f)
-    print("Recommendation model saved successfully!\n")
-
 if __name__ == "__main__":
     train_crowd_model()
     train_wait_time_model()
-    train_recommendation_model()

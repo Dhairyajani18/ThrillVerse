@@ -47,4 +47,5 @@ services:
 databases:
   - name: thrillverse-db
     databaseName: thrillverse
-    user: postgres
+    user: thrillverse_user
+

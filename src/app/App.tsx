@@ -350,7 +350,7 @@ function HomePage({ setPage }: { setPage:(p:string)=>void }) {
   }, [aiChat, aiOpen, aiLoading]);
 
   const callGeminiForThrillBot = async (userMsg: string, chatHistory: { role: string; text: string }[]): Promise<string> => {
-    const apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || "AIzaSyDTUw0ApJ1ZS02GAwpiSExjPY7hotQsYBA";
+    const apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || "gemini_api_key";
     const systemPrompt = `You are ThrillBot 🎢, the friendly, helpful, and intelligent AI concierge for ThrillVerse Amusement Park.
 
 CRITICAL THRILLVERSE RIDES KNOWLEDGE (ALL 16 RIDES ARE REAL, ACTIVE & ICONIC):

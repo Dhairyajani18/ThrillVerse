@@ -61,6 +61,14 @@ const API_URL = API_BASE_URL;
 // Custom Toast component helper
 const triggerConfetti = () => { };
 
+const DEFAULT_RIDES = [
+  { id: 1, name: "Nitro", emoji: "🎢", category: "thrill", thrill_level: 5, capacity: 24, duration: "2 min", zone: "Zone A", height: "120 cm", rating: 4.90, current_wait_time: 0, total_queue_count: 0, status_label: "Open (0 min wait)", img: nitroImg },
+  { id: 2, name: "Scream Machine", emoji: "🎡", category: "thrill", thrill_level: 5, capacity: 40, duration: "2 min", zone: "Zone A", height: "130 cm", rating: 4.80, current_wait_time: 0, total_queue_count: 0, status_label: "Open (0 min wait)", img: screamImg },
+  { id: 3, name: "SpaceX", emoji: "🚀", category: "thrill", thrill_level: 5, capacity: 20, duration: "1 min", zone: "Zone A", height: "125 cm", rating: 4.70, current_wait_time: 0, total_queue_count: 0, status_label: "Open (0 min wait)", img: spacexImg },
+  { id: 4, name: "Dare 2 Drop", emoji: "🪂", category: "thrill", thrill_level: 5, capacity: 24, duration: "2 min", zone: "Zone A", height: "120 cm", rating: 4.60, current_wait_time: 0, total_queue_count: 0, status_label: "Open (0 min wait)", img: dropImg },
+  { id: 5, name: "Dino Splashdown", emoji: "🌊", category: "water", thrill_level: 4, capacity: 24, duration: "3 min", zone: "Zone B", height: "110 cm", rating: 4.70, current_wait_time: 0, total_queue_count: 0, status_label: "Open (0 min wait)", img: dinoImg },
+];
+
 export default function VirtualQueuePage({ selectedRideProp, onClearSelectedRide }: { selectedRideProp?: any; onClearSelectedRide?: () => void }) {
   const { token, userProfile, isAuthenticated, login, register, logout, fetchWithAuth } = useAuth();
 
@@ -83,7 +91,7 @@ export default function VirtualQueuePage({ selectedRideProp, onClearSelectedRide
   const [errorMsg, setErrorMsg] = useState("");
 
   // App data states
-  const [rides, setRides] = useState<any[]>([]);
+  const [rides, setRides] = useState<any[]>(DEFAULT_RIDES);
   const [selectedRide, setSelectedRide] = useState<any | null>(null);
   const [activeQueue, setActiveQueue] = useState<any | null>(null);
   const [historyList, setHistoryList] = useState<any[]>([]);
@@ -188,10 +196,17 @@ export default function VirtualQueuePage({ selectedRideProp, onClearSelectedRide
       const res = await fetch(`${API_URL}/queue/rides/`, { headers });
       if (res.ok) {
         const data = await res.json();
-        setRides(data);
+        if (Array.isArray(data) && data.length > 0) {
+          setRides(data);
+        } else {
+          setRides(DEFAULT_RIDES);
+        }
+      } else {
+        setRides(DEFAULT_RIDES);
       }
     } catch (e) {
       console.error("Error loading rides:", e);
+      setRides(DEFAULT_RIDES);
     } finally {
       setLoadingRides(false);
     }

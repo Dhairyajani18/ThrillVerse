@@ -40,6 +40,12 @@ from .services.email_service import trigger_booking_confirmation_email
 @permission_classes([AllowAny])
 def ride_list(request):
     from .queue_engine import get_ride_snapshot
+    if not Ride.objects.exists():
+        try:
+            from django.core.management import call_command
+            call_command('seed_rides')
+        except Exception as e:
+            print(f"Auto-seed error: {e}")
     rides = Ride.objects.all().order_by('id')
     user = request.user if request and request.user.is_authenticated else None
     snapshots = [get_ride_snapshot(ride, user=user) for ride in rides]

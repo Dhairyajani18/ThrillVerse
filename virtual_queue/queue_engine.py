@@ -103,16 +103,24 @@ def sync_ride_state(ride):
     }
 
 
-def calculate_wait_time(ride, user_batch):
+def calculate_wait_time(ride, user_batch, position=None):
     """
     Formula:
-    Estimated Wait Time = Current Ride Remaining Time + (Number of Full Batches Ahead * Ride Cycle Time)
+    If position is 1-10 (or queue <= 10), wait time is 0 min.
+    Otherwise: Current Ride Remaining Time + (Number of Full Batches Ahead * Ride Cycle Time)
     """
     sync_ride_state(ride)
     current_batch = ride.current_batch_number
     duration = ride.duration_seconds or 180
     loading = ride.loading_seconds or 120
     cycle_time = duration + loading
+
+    if position is not None and position <= 10:
+        return {
+            "wait_minutes": 0,
+            "wait_seconds": 0,
+            "batches_ahead": 0
+        }
 
     now = timezone.now()
     if not ride.current_cycle_start_time:
@@ -130,7 +138,7 @@ def calculate_wait_time(ride, user_batch):
 
     batches_ahead = user_batch - current_batch - 1
     wait_seconds = cycle_remaining_seconds + (batches_ahead * cycle_time)
-    wait_minutes = max(1, math.ceil(wait_seconds / 60.0))
+    wait_minutes = max(0, math.ceil(wait_seconds / 60.0))
 
     return {
         "wait_minutes": wait_minutes,
@@ -352,11 +360,16 @@ def assign_next_queue(ride, user):
                 
             target_batch = ((new_position - 1) // capacity) + 1
 
-        wait_info = calculate_wait_time(ride, target_batch)
-        est_minutes = wait_info['wait_minutes']
-        boarding_dt = timezone.now() + datetime.timedelta(seconds=wait_info['wait_seconds'])
-
-        q_status = 'boarding' if (target_batch == ride.current_batch_number and timing['phase'] == 'boarding') else 'waiting'
+        # If position is 1-10, generate boarding pass immediately (0 min wait)
+        if new_position <= 10:
+            q_status = 'boarding'
+            est_minutes = 0
+            boarding_dt = timezone.now()
+        else:
+            wait_info = calculate_wait_time(ride, target_batch, position=new_position)
+            est_minutes = wait_info['wait_minutes']
+            boarding_dt = timezone.now() + datetime.timedelta(seconds=wait_info['wait_seconds'])
+            q_status = 'boarding' if (target_batch == ride.current_batch_number and timing['phase'] == 'boarding') else 'waiting'
 
         queue_entry = VirtualQueue.objects.create(
             user=user,

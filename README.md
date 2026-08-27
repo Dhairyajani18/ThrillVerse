@@ -1,6 +1,7 @@
 # 🎢 ThrillVerse — Next-Gen Amusement Park & Virtual Queue System
 
-> **ThrillVerse** is an AI-powered theme park management platform featuring **Smart Virtual Queues**, **ML-based Crowd & Wait Time Predictions**, **Interactive Park Maps (Leaflet)**, **Razorpay Ticketing**, and a **Node.js Email Microservice**.
+> ThrillVerse is a smart amusement park management system designed to reduce long ride queues and improve park navigation. It provides online ticket booking, virtual queues, QR-based e-tickets, real-time ride updates, smart navigation using Dijkstra’s algorithm, and AI-based crowd prediction for a faster, smarter, and better park experience.
+
 
 ---
 
@@ -199,7 +200,3 @@ ML_SERVICE_URL="http://127.0.0.1:8000"
 * **Database:** PostgreSQL
 
 ---
-
-<p align="center">
-  ✨ Crafted with ❤️ for <b>ThrillVerse Theme Park Management</b> ✨
-</p>

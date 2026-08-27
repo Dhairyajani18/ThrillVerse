@@ -53,8 +53,10 @@ const getRideImage = (ride: any) => {
   return ride.img || "";
 };
 
+import { API_BASE_URL } from "../../config/apiConfig";
+
 // API Base URL
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = API_BASE_URL;
 
 // Custom Toast component helper
 const triggerConfetti = () => { };

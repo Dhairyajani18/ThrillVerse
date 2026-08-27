@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../../config/apiConfig';
 import {
   X, ChevronLeft, ArrowRight, Plus, Trash2, CheckCircle,
   AlertCircle, CreditCard, ChevronRight, Download, Share2,
@@ -88,7 +89,7 @@ export default function CheckoutPage({
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    fetch('http://127.0.0.1:8000/queue/offers/', { headers })
+    fetch(`${API_BASE_URL}/queue/offers/`, { headers })
       .then(res => res.ok ? res.json() : [])
       .then((data: any) => {
         if (Array.isArray(data) && data.length > 0) {
@@ -248,7 +249,7 @@ export default function CheckoutPage({
       'SNOW499': { type: 'flat', val: 100 },
     };
 
-    fetch('http://127.0.0.1:8000/queue/promo/validate/', {
+    fetch(`${API_BASE_URL}/queue/promo/validate/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -341,7 +342,7 @@ export default function CheckoutPage({
     };
 
     try {
-      const orderRes = await fetch('http://127.0.0.1:8000/queue/booking/create/', {
+      const orderRes = await fetch(`${API_BASE_URL}/queue/booking/create/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -361,7 +362,7 @@ export default function CheckoutPage({
       if (orderData.razorpay_order_id.startsWith('order_mock_')) {
         setTimeout(async () => {
           try {
-            const verifyRes = await fetch('http://127.0.0.1:8000/queue/booking/verify/', {
+            const verifyRes = await fetch(`${API_BASE_URL}/queue/booking/verify/`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -450,7 +451,7 @@ export default function CheckoutPage({
           setLoading(true);
           try {
             // Verify payment on Django backend
-            const verifyRes = await fetch('http://127.0.0.1:8000/queue/booking/verify/', {
+            const verifyRes = await fetch(`${API_BASE_URL}/queue/booking/verify/`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

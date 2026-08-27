@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo, useRef } from "react";
+import { API_BASE_URL } from "../config/apiConfig";
 
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = API_BASE_URL;
 
 interface AuthContextType {
   token: string | null;

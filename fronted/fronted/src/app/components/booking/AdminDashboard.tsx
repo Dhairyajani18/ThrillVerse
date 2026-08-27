@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { API_BASE_URL } from '../../config/apiConfig';
 import { useAuth } from '../../context/AuthContext';
 import {
   TrendingUp, Users, BarChart2, DollarSign, Calendar, Clock,
@@ -124,13 +125,13 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
     const headers = { 'Authorization': `Bearer ${activeToken}` };
 
     Promise.all([
-      fetch('http://127.0.0.1:8000/queue/admin/payment-analytics/', { headers }).then(res => res.json()),
-      fetch('http://127.0.0.1:8000/queue/admin/transactions/', { headers }).then(res => res.json()),
-      fetch('http://127.0.0.1:8000/queue/rides/', { headers }).then(res => res.json()),
-      fetch('http://127.0.0.1:8000/queue/restaurants/', { headers }).then(res => res.json()),
-      fetch('http://127.0.0.1:8000/queue/admin/ticket-types/', { headers }).then(res => res.json()),
-      fetch('http://127.0.0.1:8000/queue/admin/system-config/', { headers }).then(res => res.json()),
-      fetch('http://127.0.0.1:8000/queue/offers/', { headers }).then(res => res.json())
+      fetch(`${API_BASE_URL}/queue/admin/payment-analytics/`, { headers }).then(res => res.json()),
+      fetch(`${API_BASE_URL}/queue/admin/transactions/`, { headers }).then(res => res.json()),
+      fetch(`${API_BASE_URL}/queue/rides/`, { headers }).then(res => res.json()),
+      fetch(`${API_BASE_URL}/queue/restaurants/`, { headers }).then(res => res.json()),
+      fetch(`${API_BASE_URL}/queue/admin/ticket-types/`, { headers }).then(res => res.json()),
+      fetch(`${API_BASE_URL}/queue/admin/system-config/`, { headers }).then(res => res.json()),
+      fetch(`${API_BASE_URL}/queue/offers/`, { headers }).then(res => res.json())
     ])
       .then(([analytics, txs, ridesList, restList, tTypes, sysConf, offersList]) => {
         const mappedRides = (Array.isArray(ridesList) ? ridesList : []).map((r: any) => ({
@@ -182,7 +183,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
 
       // Real-time 3-second auto-refresh for active ride queue monitoring
       const intervalId = setInterval(() => {
-        fetch('http://127.0.0.1:8000/queue/rides/')
+        fetch(`${API_BASE_URL}/queue/rides/`)
           .then(res => res.json())
           .then(ridesList => {
             if (Array.isArray(ridesList)) {
@@ -245,7 +246,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
     setScanResult(null);
     const activeToken = token || localStorage.getItem('token') || '';
 
-    fetch('http://127.0.0.1:8000/queue/booking/check-in/', {
+    fetch(`${API_BASE_URL}/queue/booking/check-in/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -283,7 +284,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
       'Content-Type': 'application/json'
     };
 
-    fetch(`http://127.0.0.1:8000/queue/admin/rides/${editingRide.id}/update/`, {
+    fetch(`${API_BASE_URL}/queue/admin/rides/${editingRide.id}/update/`, {
       method: 'PUT',
       headers,
       body: JSON.stringify(editingRide)
@@ -309,7 +310,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
       'Content-Type': 'application/json'
     };
 
-    fetch(`http://127.0.0.1:8000/queue/admin/restaurants/${editingRestaurant.id}/update/`, {
+    fetch(`${API_BASE_URL}/queue/admin/restaurants/${editingRestaurant.id}/update/`, {
       method: 'PUT',
       headers,
       body: JSON.stringify(editingRestaurant)
@@ -335,7 +336,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
       'Content-Type': 'application/json'
     };
 
-    fetch(`http://127.0.0.1:8000/queue/admin/ticket-types/${editingTicket.id}/update/`, {
+    fetch(`${API_BASE_URL}/queue/admin/ticket-types/${editingTicket.id}/update/`, {
       method: 'PUT',
       headers,
       body: JSON.stringify(editingTicket)
@@ -358,7 +359,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     };
-    fetch('http://127.0.0.1:8000/queue/admin/system-config/', {
+    fetch(`${API_BASE_URL}/queue/admin/system-config/`, {
       method: 'PUT',
       headers,
       body: JSON.stringify({ gst_percentage: newGst })
@@ -382,7 +383,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
       'Content-Type': 'application/json'
     };
 
-    fetch('http://127.0.0.1:8000/queue/admin/offers/create/', {
+    fetch(`${API_BASE_URL}/queue/admin/offers/create/`, {
       method: 'POST',
       headers,
       body: JSON.stringify(newOffer)
@@ -414,7 +415,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
   const handleDisableOffer = (id: number) => {
     const activeToken = token || localStorage.getItem('token') || '';
     const headers = { 'Authorization': `Bearer ${activeToken}` };
-    fetch(`http://127.0.0.1:8000/queue/admin/offers/${id}/`, {
+    fetch(`${API_BASE_URL}/queue/admin/offers/${id}/`, {
       method: 'DELETE',
       headers
     })
@@ -432,7 +433,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
     const activeToken = token || localStorage.getItem('token') || '';
     const headers = { 'Authorization': `Bearer ${activeToken}`, 'Content-Type': 'application/json' };
 
-    fetch('http://127.0.0.1:8000/api/predict-crowd', {
+    fetch(`${API_BASE_URL}/api/predict-crowd`, {
       method: 'POST',
       headers,
       body: JSON.stringify({
@@ -486,7 +487,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
       'Content-Type': 'application/json'
     };
 
-    fetch('http://127.0.0.1:8000/queue/admin/broadcast-email/', {
+    fetch(`${API_BASE_URL}/queue/admin/broadcast-email/`, {
       method: 'POST',
       headers,
       body: JSON.stringify({
@@ -513,7 +514,7 @@ export default function AdminDashboard({ token, onClose }: AdminDashboardProps) 
     setCalcPromoDiscount(0);
     if (!calcPromo) return;
 
-    fetch('http://127.0.0.1:8000/queue/promo/validate/', {
+    fetch(`${API_BASE_URL}/queue/promo/validate/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

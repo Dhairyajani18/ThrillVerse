@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { API_BASE_URL } from "./config/apiConfig";
 import { toast } from "sonner";
 import { Toaster } from "./components/ui/sonner";
 import { notifyAuthSuccess } from "./utils/toast";
@@ -1809,7 +1810,7 @@ function TicketsPage({ selectedPromo, onClearPromo, userTickets, setUserTickets,
 
   useEffect(() => {
     const loadOffers = () => {
-      fetch("http://127.0.0.1:8000/queue/offers/")
+      fetch(`${API_BASE_URL}/queue/offers/`)
         .then(res => res.ok ? res.json() : [])
         .then(data => {
           if (Array.isArray(data)) {
@@ -1979,7 +1980,7 @@ function TicketsPage({ selectedPromo, onClearPromo, userTickets, setUserTickets,
       holder_name: "Rohan Sharma"
     };
 
-    fetch("http://127.0.0.1:8000/queue/tickets/book/", {
+    fetch(`${API_BASE_URL}/queue/tickets/book/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -4293,7 +4294,7 @@ function AppContent() {
     if (token) {
       headers["Authorization"] = `Bearer ${token}`;
     }
-    fetch("http://127.0.0.1:8000/queue/rides/", { headers })
+    fetch(`${API_BASE_URL}/queue/rides/`, { headers })
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
@@ -4338,7 +4339,7 @@ function AppContent() {
       })
       .catch(err => console.error("Error fetching rides:", err));
 
-    fetch("http://127.0.0.1:8000/queue/restaurants/")
+    fetch(`${API_BASE_URL}/queue/restaurants/`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {

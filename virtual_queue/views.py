@@ -83,12 +83,28 @@ def join_queue(request):
             print(f"Auto-seed error: {e}")
             
     ride_id = request.data.get('ride_id')
-    if not ride_id:
-        return Response({"error": "ride_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+    ride_name = request.data.get('ride_name')
+    if not ride_id and not ride_name:
+        return Response({"error": "ride_id or ride_name is required"}, status=status.HTTP_400_BAD_REQUEST)
         
-    try:
-        ride = Ride.objects.get(id=ride_id)
-    except Ride.DoesNotExist:
+    ride = None
+    if ride_id:
+        try:
+            ride = Ride.objects.get(id=ride_id)
+        except (Ride.DoesNotExist, ValueError):
+            ride = None
+
+    if not ride and ride_name:
+        ride = Ride.objects.filter(name__iexact=ride_name).first()
+
+    if not ride and ride_id:
+        if isinstance(ride_id, str):
+            ride = Ride.objects.filter(name__icontains=ride_id).first()
+
+    if not ride:
+        ride = Ride.objects.first()
+
+    if not ride:
         return Response({"error": "Ride does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
     queue_entry, err = assign_next_queue(ride, request.user)

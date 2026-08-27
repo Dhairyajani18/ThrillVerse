@@ -368,7 +368,10 @@ export default function VirtualQueuePage({ selectedRideProp, onClearSelectedRide
       const res = await fetchWithAuth("/queue/join/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ride_id: selectedRide.id })
+        body: JSON.stringify({
+          ride_id: selectedRide.id,
+          ride_name: selectedRide.name
+        })
       });
       const data = await res.json();
       if (res.ok) {

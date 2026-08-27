@@ -75,6 +75,13 @@ def ride_detail(request, pk):
 @permission_classes([IsAuthenticated])
 def join_queue(request):
     from .queue_engine import assign_next_queue, get_ride_snapshot
+    if not Ride.objects.exists():
+        try:
+            from django.core.management import call_command
+            call_command('seed_rides')
+        except Exception as e:
+            print(f"Auto-seed error: {e}")
+            
     ride_id = request.data.get('ride_id')
     if not ride_id:
         return Response({"error": "ride_id is required"}, status=status.HTTP_400_BAD_REQUEST)

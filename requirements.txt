@@ -8,6 +8,9 @@ dj-database-url
 whitenoise
 gunicorn
 requests
+razorpay
+qrcode
+pillow
 scikit-learn
 pandas
 numpy

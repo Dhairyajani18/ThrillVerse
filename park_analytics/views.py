@@ -18,7 +18,7 @@ def load_models():
     global crowd_model, weather_encoder, wait_time_model
     
    
-    selected_dir = os.path.join(BASE_DIR, 'ml_service\\models')
+    selected_dir = os.path.join(BASE_DIR, 'ml_service', 'models')
     
     print(f"[ML Model Loader] Django is loading files from: {selected_dir}")
     

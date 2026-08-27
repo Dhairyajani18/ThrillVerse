@@ -191,6 +191,62 @@ ML_SERVICE_URL="http://127.0.0.1:8000"
 
 ---
 
+---
+
+## 🌐 Deploying on Render.com
+
+ThrillVerse is pre-configured for seamless deployment on **Render**.
+
+### Option A: ⚡ 1-Click Blueprint Deployment (Recommended)
+
+1. Push this repository to GitHub.
+2. Log into [Render Dashboard](https://dashboard.render.com/).
+3. Click **New +** -> **Blueprint**.
+4. Connect your GitHub repository. Render will automatically detect [`render.yaml`](file:///c:/Users/Jani%20Dhairya/OneDrive/Desktop/sem-4_p1/render.yaml) and provision:
+   - 🐘 **PostgreSQL Database** (`thrillverse-db`)
+   - 🖥️ **Django REST Backend** (`thrillverse-backend`)
+   - ✉️ **Node.js Email Microservice** (`thrillverse-email-service`)
+   - 📱 **React Frontend Static Site** (`thrillverse-frontend`)
+5. Click **Apply**.
+
+---
+
+### Option B: 🛠️ Manual Deployment Step-by-Step
+
+#### 1️⃣ PostgreSQL Database
+- Click **New +** -> **PostgreSQL**.
+- Name: `thrillverse-db`
+- Copy the **Internal Database URL**.
+
+#### 2️⃣ Django REST Backend
+- Click **New +** -> **Web Service**.
+- Connect repository.
+- **Environment:** `Python 3`
+- **Build Command:** `./build.sh`
+- **Start Command:** `gunicorn adventure_park.wsgi:application`
+- **Environment Variables:**
+  - `DATABASE_URL` = `<Internal Database URL from Step 1>`
+  - `SECRET_KEY` = `<Random Secret Key>`
+  - `DEBUG` = `False`
+  - `ALLOWED_HOSTS` = `*`
+
+#### 3️⃣ Node.js Email Microservice
+- Click **New +** -> **Web Service**.
+- **Root Directory:** `email_service`
+- **Environment:** `Node`
+- **Build Command:** `npm install`
+- **Start Command:** `node server.js`
+- **Environment Variables:** Set your `SMTP_USER`, `SMTP_PASS`, `SMTP_HOST`.
+
+#### 4️⃣ React Frontend (Vite)
+- Click **New +** -> **Static Site**.
+- **Root Directory:** `fronted/fronted`
+- **Build Command:** `npm install && npm run build`
+- **Publish Directory:** `dist`
+- **Rewrite Rules:** Add Rewrite `/*` -> `/index.html` for single-page routing.
+
+---
+
 ## 🛠️ Tech Stack Overview
 
 * **Frontend:** React 18, Vite, Tailwind CSS, Leaflet Maps, Lucide Icons, Recharts

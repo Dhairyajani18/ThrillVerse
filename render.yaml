@@ -1,0 +1,50 @@
+services:
+  # 1. Django REST Backend Web Service
+  - type: web
+    name: thrillverse-backend
+    env: python
+    buildCommand: ./build.sh
+    startCommand: gunicorn adventure_park.wsgi:application
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: thrillverse-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: "*"
+
+  # 2. Node.js Email Microservice
+  - type: web
+    name: thrillverse-email-service
+    rootDir: email_service
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: 587
+
+  # 3. React Frontend Static Site
+  - type: web
+    name: thrillverse-frontend
+    rootDir: fronted/fronted
+    env: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+databases:
+  - name: thrillverse-db
+    databaseName: thrillverse
+    user: postgres

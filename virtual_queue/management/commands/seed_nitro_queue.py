@@ -7,7 +7,7 @@ from virtual_queue.models import Ride, VirtualQueue, generate_queue_token
 from authentication.models import UserProfile
 
 class Command(BaseCommand):
-    help = 'Cleans up existing active entries and seeds 200 queue entries for Nitro and 100 queue entries for Scream Machine.'
+    help = 'Cleans up existing active entries and seeds 200 queue entries for Nitro and 30 queue entries for Scream Machine.'
 
     def handle(self, *args, **kwargs):
         # List of preserved usernames
@@ -34,7 +34,7 @@ class Command(BaseCommand):
 
         targets = [
             ("Nitro", 200),
-            ("Scream Machine", 150)
+            ("Scream Machine", 30)
         ]
 
         for ride_search_name, target_count in targets:
@@ -100,5 +100,5 @@ class Command(BaseCommand):
 
             self.stdout.write(self.style.SUCCESS(f"Successfully seeded {target_count} active entries into {ride.name}!"))
 
-        self.stdout.write(self.style.SUCCESS("\nSeeding complete! Preserved core users and created 200 Nitro entries & 100 Scream Machine entries."))
+        self.stdout.write(self.style.SUCCESS("\nSeeding complete! Preserved core users and created 200 Nitro entries & 30 Scream Machine entries."))
 

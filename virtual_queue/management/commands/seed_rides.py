@@ -1,4 +1,5 @@
 import datetime
+from decimal import Decimal
 import uuid
 import random
 from django.core.management.base import BaseCommand
@@ -23,6 +24,33 @@ class Command(BaseCommand):
         TicketType.objects.all().delete()
         SystemConfig.objects.all().delete()
         Ride.objects.all().delete()
+        PromoCode.objects.all().delete()
+        
+        # Seed Promo Codes
+        today = timezone.localdate()
+        expiry = today + datetime.timedelta(days=365)
+        promo_codes_data = [
+            {"code": "THRILL20", "discount_type": "percentage", "discount_value": Decimal("20.00")},
+            {"code": "WATWED799", "discount_type": "flat", "discount_value": Decimal("200.00")},
+            {"code": "WELCOME10", "discount_type": "percentage", "discount_value": Decimal("10.00")},
+            {"code": "WELCOME50", "discount_type": "percentage", "discount_value": Decimal("50.00")},
+            {"code": "MONSOON30", "discount_type": "percentage", "discount_value": Decimal("30.00")},
+            {"code": "HAPPYTUES", "discount_type": "percentage", "discount_value": Decimal("20.00")},
+            {"code": "STUDENT50", "discount_type": "percentage", "discount_value": Decimal("25.00")},
+            {"code": "SAVE200", "discount_type": "flat", "discount_value": Decimal("200.00")},
+            {"code": "SNOW499", "discount_type": "flat", "discount_value": Decimal("100.00")},
+            {"code": "PROMO50", "discount_type": "flat", "discount_value": Decimal("50.00")},
+        ]
+        for p in promo_codes_data:
+            PromoCode.objects.create(
+                code=p["code"],
+                discount_type=p["discount_type"],
+                discount_value=p["discount_value"],
+                min_booking_amount=Decimal("0.00"),
+                max_uses=10000,
+                expiry_date=expiry,
+                is_active=True
+            )
         
         # Optional: Delete bookings/payments to prevent clean conflicts, 
         # but let's just delete the seeded ones later or clean them

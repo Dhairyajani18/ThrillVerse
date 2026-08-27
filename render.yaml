@@ -3,6 +3,7 @@ services:
   - type: web
     name: thrillverse-backend
     env: python
+    plan: free
     buildCommand: ./build.sh
     startCommand: gunicorn adventure_park.wsgi:application
     envVars:
@@ -22,6 +23,7 @@ services:
     name: thrillverse-email-service
     rootDir: email_service
     env: node
+    plan: free
     buildCommand: npm install
     startCommand: node server.js
     envVars:
@@ -48,4 +50,6 @@ databases:
   - name: thrillverse-db
     databaseName: thrillverse
     user: thrillverse_user
+    plan: free
+
 
